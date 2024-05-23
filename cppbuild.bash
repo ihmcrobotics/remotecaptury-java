@@ -11,7 +11,7 @@ fi
 tar -xvf CapturyLiveSDK.tar.gz
 
 cp ../CMakeLists.txt.RemoteCaptury sdk/network/CMakeLists.txt
-cp ../RemoteCaptury.cpp.patch sdk/network/RemoteCaptury.cpp.patch
+cp ../patches/RemoteCaptury.cpp.patch sdk/network/RemoteCaptury.cpp.patch
 
 # Convert all line endings to unix
 find ./sdk -type f -print0 | xargs -0 dos2unix
@@ -48,15 +48,15 @@ java -jar javacpp.jar us/ihmc/remotecaptury/*.java us/ihmc/remotecaptury/global/
 #### Copy shared libs to resources ####
 # Linux
 if [ -f "javainstall/libjniremotecaptury.so" ]; then
-  cp javainstall/libjniremotecaptury.so ../src/main/resources/native/linux-x86_64
+  cp javainstall/libjniremotecaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
 fi
 if [ -f "lib/libRemoteCaptury.so" ]; then
-  cp lib/libRemoteCaptury.so ../src/main/resources/native/linux-x86_64
+  cp lib/libRemoteCaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
 fi
 # Windows
 if [ -f "javainstall/jniremotecaptury.dll" ]; then
-  cp javainstall/jniremotecaptury.dll ../src/main/resources/native/windows-x86_64
+  cp javainstall/jniremotecaptury.dll ../src/main/resources/remotecaptury-java/native/windows-x86_64
 fi
 if [ -f "bin/RemoteCaptury.dll" ]; then
-  cp bin/RemoteCaptury.dll ../src/main/resources/native/windows-x86_64
+  cp bin/RemoteCaptury.dll ../src/main/resources/remotecaptury-java/native/windows-x86_64
 fi
