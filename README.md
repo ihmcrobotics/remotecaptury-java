@@ -8,7 +8,15 @@ Supported platforms:
 
 ### Gradle
 ```
+repositories {
+    [...]
+    maven {
+        url = uri("https://s01.oss.sonatype.org/content/repositories/releases")
+    }
+}
+
 dependencies {
+    [...]
     implementation("us.ihmc:remotecaptury-java:1.0.0")
 }
 ```
