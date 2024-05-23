@@ -32,6 +32,10 @@ public class RemoteCapturyNativeLibrary implements NativeLibraryDescription
          {
             return NativeLibraryWithDependencies.fromFilename("libjniremotecaptury.so", "libRemoteCaptury.so");
          }
+         case WIN64 ->
+         {
+            return NativeLibraryWithDependencies.fromFilename("jniremotecaptury.dll", "RemoteCaptury.dll");
+         }
       }
 
       System.out.println("Unsupported platform: " + os.name() + "-" + arch.name());

@@ -22,4 +22,5 @@ install(FILES ../network/RemoteCaptury.h
 
 install(TARGETS RemoteCaptury
         LIBRARY DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
-        ARCHIVE DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)
+        ARCHIVE DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
+        RUNTIME DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../bin)

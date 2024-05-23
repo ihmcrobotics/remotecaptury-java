@@ -43,3 +43,5 @@ bin/
 .DS_Store
 
 cppbuild/
+
+hs_err*

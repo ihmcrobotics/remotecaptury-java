@@ -24,5 +24,10 @@ public class RemoteCapturyConfig implements InfoMapper
    public void map(InfoMap infoMap)
    {
       infoMap.put(new Info("CAPTURY_DLL_EXPORT").cppTypes().annotations());
+      // These had linking issues on Windows. Fix?
+      infoMap.put(new Info("CapturyActorStatusString",
+                           "Captury_getHumanReadableMessageType",
+                           "Captury_getCurrentImage",
+                           "Captury_sendCustomPacket").skip());
    }
 }
