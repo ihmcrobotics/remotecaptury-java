@@ -1,5 +1,6 @@
 package us.ihmc.remotecaptury.test;
 
+import org.junit.jupiter.api.Test;
 import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
@@ -73,6 +74,15 @@ public class TestNativeLibraryLoads
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
       Captury_stopStreaming();
+      Captury_disconnect();
+   }
+
+   @Test
+   public void testLibraryLoads()
+   {
+      System.setProperty("org.bytedeco.javacpp.loadLibraries", "false");
+      RemoteCapturyNativeLibrary.load();
+
       Captury_disconnect();
    }
 }
