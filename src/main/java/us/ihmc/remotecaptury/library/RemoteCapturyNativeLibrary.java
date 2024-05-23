@@ -20,7 +20,7 @@ public class RemoteCapturyNativeLibrary implements NativeLibraryDescription
          };
       }
 
-      return "native." + archPackage;
+      return "remotecaptury-java.native." + archPackage;
    }
 
    @Override
