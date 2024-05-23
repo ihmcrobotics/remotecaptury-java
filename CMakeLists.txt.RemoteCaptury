@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.0)
+
+if (OpenMP_C_FLAGS)
+	string(REPLACE ${OpenMP_C_FLAGS} "" CMAKE_C_FLAGS ${CMAKE_C_FLAGS})
+endif (OpenMP_C_FLAGS)
+if (OpenMP_CXX_FLAGS)
+	string(REPLACE ${OpenMP_CXX_FLAGS} "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+endif (OpenMP_CXX_FLAGS)
+
+project(RemoteCaptury)
+
+set (CMAKE_CXX_STANDARD 11)
+
+include_directories(../include)
+add_library(RemoteCaptury SHARED RemoteCaptury.cpp)
+add_library(RemoteCapturyStatic STATIC RemoteCaptury.cpp)
+
+install(DIRECTORY ../include/
+        DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
+install(FILES ../network/RemoteCaptury.h
+        DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
+
+install(TARGETS RemoteCaptury
+        LIBRARY DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../lib
+        ARCHIVE DESTINATION ${CMAKE_CURRENT_SOURCE_DIR}/../../lib)

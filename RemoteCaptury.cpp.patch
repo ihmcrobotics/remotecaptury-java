@@ -1,0 +1,4 @@
+1939c1939
+< 		log("[%d] Captury_disconnect: will close socket %d", std::this_thread::get_id(), sock);
+---
+> 		log("[%d] Captury_disconnect: will close socket %d", 0, sock);
