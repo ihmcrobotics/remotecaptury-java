@@ -18,49 +18,49 @@ public class remotecaptury extends us.ihmc.remotecaptury.RemoteCapturyConfig {
 // #include <stdint.h>
 
 // #pragma pack(push, 1)
-// Targeting ..\CapturyJoint.java
+// Targeting ../CapturyJoint.java
 
 
-// Targeting ..\CapturyBlendShape.java
+// Targeting ../CapturyBlendShape.java
 
 
-// Targeting ..\CapturyBlob.java
+// Targeting ../CapturyBlob.java
 
 
-// Targeting ..\CapturyActor.java
+// Targeting ../CapturyActor.java
 
 
-// Targeting ..\CapturyTransform.java
+// Targeting ../CapturyTransform.java
 
 
 
 /** enum CapturyPoseFlags */
 public static final int CAPTURY_LEFT_FOOT_ON_GROUND = 0x01, CAPTURY_RIGHT_FOOT_ON_GROUND = 0x02;
-// Targeting ..\CapturyPose.java
+// Targeting ../CapturyPose.java
 
 
-// Targeting ..\CapturyIMUPose.java
+// Targeting ../CapturyIMUPose.java
 
 
-// Targeting ..\CapturyConstraint.java
+// Targeting ../CapturyConstraint.java
 
 
-// Targeting ..\CapturyCamera.java
+// Targeting ../CapturyCamera.java
 
 
-// Targeting ..\CapturyImage.java
+// Targeting ../CapturyImage.java
 
 
-// Targeting ..\CapturyDepthImage.java
+// Targeting ../CapturyDepthImage.java
 
 
-// Targeting ..\CapturyARTag.java
+// Targeting ../CapturyARTag.java
 
 
-// Targeting ..\CapturyCornerDetection.java
+// Targeting ../CapturyCornerDetection.java
 
 
-// Targeting ..\CapturyLatencyInfo.java
+// Targeting ../CapturyLatencyInfo.java
 
 
 
@@ -210,7 +210,7 @@ public static native int Captury_stopStreaming(int _wait/*=1*/);
 public static native int Captury_stopStreaming();
 
 // #pragma pack(push, 1)
-// Targeting ..\CapturyAngleData.java
+// Targeting ../CapturyAngleData.java
 
 
 // #pragma pack(pop)
@@ -232,7 +232,7 @@ public static native CapturyAngleData Captury_getCurrentAngles(int actorId, int[
 
 // simple function for releasing memory of a pose
 public static native void Captury_freePose(CapturyPose pose);
-// Targeting ..\CapturyNewPoseCallback.java
+// Targeting ../CapturyNewPoseCallback.java
 
 
 
@@ -241,7 +241,7 @@ public static native void Captury_freePose(CapturyPose pose);
 // try to be quick in the callback
 // returns 1 if successful otherwise 0
 public static native int Captury_registerNewPoseCallback(CapturyNewPoseCallback callback);
-// Targeting ..\CapturyNewAnglesCallback.java
+// Targeting ../CapturyNewAnglesCallback.java
 
 
 
@@ -254,7 +254,7 @@ public static native int Captury_registerNewAnglesCallback(CapturyNewAnglesCallb
 /** enum CapturyActorStatus */
 public static final int ACTOR_SCALING = 0, ACTOR_TRACKING = 1, ACTOR_STOPPED = 2, ACTOR_DELETED = 3, ACTOR_UNKNOWN = 4;
 
-// Targeting ..\CapturyActorChangedCallback.java
+// Targeting ../CapturyActorChangedCallback.java
 
 
 // returns CapturyActorStatus if the actorId is not known returns ACTOR_UNKNOWN
@@ -266,7 +266,7 @@ public static native int Captury_getActorStatus(int actorId);
 // status can be one of CapturyActorStatus
 // returns 1 if successful otherwise 0
 public static native int Captury_registerActorChangedCallback(CapturyActorChangedCallback callback);
-// Targeting ..\CapturyARTagCallback.java
+// Targeting ../CapturyARTagCallback.java
 
 
 
@@ -280,7 +280,7 @@ public static native int Captury_registerARTagCallback(CapturyARTagCallback call
 public static native CapturyARTag Captury_getCurrentARTags();
 
 public static native void Captury_freeARTags(CapturyARTag artags);
-// Targeting ..\CapturyImageCallback.java
+// Targeting ../CapturyImageCallback.java
 
 
 
@@ -466,7 +466,7 @@ public static native int Captury_stopRecording();
 
 // returns 1 if successful, 0 otherwise
 public static native int Captury_getCurrentLatency(CapturyLatencyInfo latencyInfo);
-// Targeting ..\CapturyCustomPacketCallback.java
+// Targeting ../CapturyCustomPacketCallback.java
 
 
 
@@ -487,7 +487,7 @@ public static native int Captury_registerCustomPacketCallback(String pluginName,
 
 // convert the pose given in global coordinates into local coordinates
 public static native void Captury_convertPoseToLocal(CapturyPose pose, int actorId);
-// Targeting ..\CapturyBackgroundFinishedCallback.java
+// Targeting ../CapturyBackgroundFinishedCallback.java
 
 
 
@@ -553,136 +553,136 @@ public static final int capturyActors = 1, capturyActor = 2,
 
 // make sure structures are laid out without padding
 // #pragma pack(push, 1)
-// Targeting ..\CapturyRequestPacket.java
+// Targeting ../CapturyRequestPacket.java
 
 
-// Targeting ..\CapturyActorsPacket.java
+// Targeting ../CapturyActorsPacket.java
 
 
-// Targeting ..\CapturyJointPacket.java
+// Targeting ../CapturyJointPacket.java
 
 
-// Targeting ..\CapturyJointPacket2.java
+// Targeting ../CapturyJointPacket2.java
 
 
-// Targeting ..\CapturyJointPacket3.java
+// Targeting ../CapturyJointPacket3.java
 
 
-// Targeting ..\CapturyActorPacket.java
+// Targeting ../CapturyActorPacket.java
 
 
-// Targeting ..\CapturyActorBlendShapesPacket.java
+// Targeting ../CapturyActorBlendShapesPacket.java
 
 
-// Targeting ..\CapturyActorContinuedPacket.java
+// Targeting ../CapturyActorContinuedPacket.java
 
 
-// Targeting ..\CapturyCamerasPacket.java
+// Targeting ../CapturyCamerasPacket.java
 
 
-// Targeting ..\CapturyCameraPacket.java
+// Targeting ../CapturyCameraPacket.java
 
 
-// Targeting ..\CapturyStreamPacket0.java
+// Targeting ../CapturyStreamPacket0.java
 
 
-// Targeting ..\CapturyStreamPacket.java
+// Targeting ../CapturyStreamPacket.java
 
 
-// Targeting ..\CapturyStreamPacket1.java
+// Targeting ../CapturyStreamPacket1.java
 
 
-// Targeting ..\CapturyStreamPacketTcp.java
+// Targeting ../CapturyStreamPacketTcp.java
 
 
-// Targeting ..\CapturyStreamPacket1Tcp.java
+// Targeting ../CapturyStreamPacket1Tcp.java
 
 
-// Targeting ..\CapturyDaySessionShotPacket.java
+// Targeting ../CapturyDaySessionShotPacket.java
 
 
-// Targeting ..\CapturySetShotPacket.java
+// Targeting ../CapturySetShotPacket.java
 
 
-// Targeting ..\CapturyPosePacket.java
+// Targeting ../CapturyPosePacket.java
 
 
-// Targeting ..\CapturyPosePacket2.java
+// Targeting ../CapturyPosePacket2.java
 
 
-// Targeting ..\CapturyPoseCont.java
+// Targeting ../CapturyPoseCont.java
 
 
-// Targeting ..\CapturyAnglesPacket.java
+// Targeting ../CapturyAnglesPacket.java
 
 
-// Targeting ..\CapturyConstraintPacket.java
+// Targeting ../CapturyConstraintPacket.java
 
 
-// Targeting ..\CapturyTimePacket.java
+// Targeting ../CapturyTimePacket.java
 
 
-// Targeting ..\CapturyTimePacket2.java
+// Targeting ../CapturyTimePacket2.java
 
 
-// Targeting ..\CapturyGetMarkerTransformPacket.java
+// Targeting ../CapturyGetMarkerTransformPacket.java
 
 
-// Targeting ..\CapturyMarkerTransformPacket.java
+// Targeting ../CapturyMarkerTransformPacket.java
 
 
-// Targeting ..\CapturyGetScalingProgressPacket.java
+// Targeting ../CapturyGetScalingProgressPacket.java
 
 
-// Targeting ..\CapturyScalingProgressPacket.java
+// Targeting ../CapturyScalingProgressPacket.java
 
 
-// Targeting ..\CapturyCustomPacket.java
+// Targeting ../CapturyCustomPacket.java
 
 
-// Targeting ..\CapturyGetImagePacket.java
+// Targeting ../CapturyGetImagePacket.java
 
 
-// Targeting ..\CapturyGetImageDataPacket.java
+// Targeting ../CapturyGetImageDataPacket.java
 
 
-// Targeting ..\CapturyImageHeaderPacket.java
+// Targeting ../CapturyImageHeaderPacket.java
 
 
-// Targeting ..\CapturyImageDataPacket.java
+// Targeting ../CapturyImageDataPacket.java
 
 
-// Targeting ..\CapturySnapActorPacket.java
+// Targeting ../CapturySnapActorPacket.java
 
 
-// Targeting ..\CapturySnapActorPacket2.java
+// Targeting ../CapturySnapActorPacket2.java
 
 
-// Targeting ..\CapturyStartTrackingPacket.java
+// Targeting ../CapturyStartTrackingPacket.java
 
 
-// Targeting ..\CapturyStopTrackingPacket.java
+// Targeting ../CapturyStopTrackingPacket.java
 
 
-// Targeting ..\CapturyActorModeChangedPacket.java
+// Targeting ../CapturyActorModeChangedPacket.java
 
 
-// Targeting ..\CapturyARTagPacket.java
+// Targeting ../CapturyARTagPacket.java
 
 
-// Targeting ..\CapturyBackgroundQualityPacket.java
+// Targeting ../CapturyBackgroundQualityPacket.java
 
 
-// Targeting ..\CapturySetActorNamePacket.java
+// Targeting ../CapturySetActorNamePacket.java
 
 
-// Targeting ..\CapturyStatusPacket.java
+// Targeting ../CapturyStatusPacket.java
 
 
-// Targeting ..\CapturyIMUData.java
+// Targeting ../CapturyIMUData.java
 
 
-// Targeting ..\CapturyLatencyPacket.java
+// Targeting ../CapturyLatencyPacket.java
 
 
 
@@ -698,7 +698,7 @@ public static final int CAPTURY_LOG_INFO =	4;	// the program is running normally
 					// interesting points have been reached
 public static final int CAPTURY_LOG_DEBUG =	5;	// debugging messages
 public static final int CAPTURY_LOG_TRACE =	6;
-// Targeting ..\CapturyLogPacket.java
+// Targeting ../CapturyLogPacket.java
 
 
 
