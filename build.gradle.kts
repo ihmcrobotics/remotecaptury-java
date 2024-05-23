@@ -1,5 +1,6 @@
 plugins {
     id("java")
+    id("maven-publish")
 }
 
 group = "us.ihmc"
@@ -7,6 +8,31 @@ version = "1.0.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            groupId = project.group.toString()
+            artifactId = "remotecaptury-java"
+            version = project.version.toString()
+        }
+    }
+
+    repositories {
+        maven {
+            val releasesRepo = uri("https://s01.oss.sonatype.org/content/repositories/releases")
+            val snapshotsRepo = uri("https://s01.oss.sonatype.org/content/repositories/snapshots")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepo else releasesRepo
+
+            credentials {
+                username = project.findProperty("publishUsername").toString()
+                password = project.findProperty("publishPassword").toString()
+            }
+        }
+    }
 }
 
 dependencies {
