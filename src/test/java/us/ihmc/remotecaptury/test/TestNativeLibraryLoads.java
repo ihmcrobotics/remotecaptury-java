@@ -11,7 +11,6 @@ public class TestNativeLibraryLoads
    @Test
    public void testLibraryLoads()
    {
-      System.setProperty("org.bytedeco.javacpp.loadLibraries", "false");
       RemoteCapturyNativeLibrary.load();
 
       int connectionStatus = remotecaptury.Captury_getConnectionStatus();

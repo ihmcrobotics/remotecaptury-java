@@ -12,7 +12,8 @@ import org.bytedeco.javacpp.tools.InfoMapper;
             include = {"captury/PublicStructs.h",
                        "RemoteCaptury.h"},
             linkpath = "lib",
-            link = "RemoteCaptury"
+            link = "RemoteCaptury",
+            preload = "jniremotecaptury"
       )
 },
       target = "us.ihmc.remotecaptury",
