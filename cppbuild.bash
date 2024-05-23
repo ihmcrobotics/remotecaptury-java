@@ -1,4 +1,5 @@
 #!/bin/bash
+# This build script is designed to work on Linux and Windows. For Windows, run from a bash shell launched with launchBashWindows.bat
 pushd .
 mkdir cppbuild
 cd cppbuild
