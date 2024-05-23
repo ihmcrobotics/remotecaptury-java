@@ -20,3 +20,9 @@ dependencies {
     implementation("us.ihmc:remotecaptury-java:1.0.0")
 }
 ```
+### Setup
+You must manually load the library first before using it.
+```
+RemoteCapturyNativeLibrary.load();
+```
+Ensure [this test](https://github.com/ihmcrobotics/remotecaptury-java/blob/main/src/test/java/us/ihmc/remotecaptury/test/TestNativeLibraryLoads.java) runs on your machine before proceeding.
