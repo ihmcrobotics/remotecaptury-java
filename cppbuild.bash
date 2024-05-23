@@ -7,7 +7,7 @@ if [ ! -f "CapturyLiveSDK.tar.gz" ]; then
   curl -O https://dn-cap.com/CapturyLiveSDK.tar.gz
 fi
 
-#tar -xvf CapturyLiveSDK.tar.gz
+tar -xvf CapturyLiveSDK.tar.gz
 
 cp ../CMakeLists.txt.RemoteCaptury sdk/network/CMakeLists.txt
 cp ../RemoteCaptury.cpp.patch sdk/network/RemoteCaptury.cpp.patch
