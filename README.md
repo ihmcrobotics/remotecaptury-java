@@ -20,6 +20,16 @@ dependencies {
     implementation("us.ihmc:remotecaptury-java:1.0.0")
 }
 ```
+#### Gradle with ihmc-build
+```
+mainDependencies {
+   [...]   
+   api("us.ihmc:remotecaptury-java:1.0.0") {
+      // You may need to exclude javacpp from being transitively included
+      exclude(group = "org.bytedeco", module = "javacpp")
+   }
+}
+```
 ### Setup
 You must manually load the library first before using it.
 ```
