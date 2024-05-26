@@ -11,6 +11,7 @@ fi
 tar -xvf CapturyLiveSDK.tar.gz
 
 cp ../CMakeLists.txt.RemoteCaptury sdk/network/CMakeLists.txt
+cp ../patches/RemoteCaptury.h.patch sdk/network/RemoteCaptury.h.patch
 cp ../patches/RemoteCaptury.cpp.patch sdk/network/RemoteCaptury.cpp.patch
 
 # Convert all line endings to unix
@@ -18,12 +19,13 @@ find ./sdk -type f -print0 | xargs -0 dos2unix
 
 cd sdk/network
 
+patch RemoteCaptury.h RemoteCaptury.h.patch
 patch RemoteCaptury.cpp RemoteCaptury.cpp.patch
 
 mkdir build
 cd build
 
-cmake -DCMAKE_BUILD_TYPE=Release ..
+cmake ..
 cmake --build . --config Release
 cmake --build . --target install
 
