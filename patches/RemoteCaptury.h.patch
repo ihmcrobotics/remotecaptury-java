@@ -1,0 +1,64 @@
+171c171
+< extern const char* CapturyActorStatusString[];
+---
+> extern const char* CapturyActorStatusString[128];
+476c476
+< 	char		name[];		// zero terminated joint name
+---
+> 	char		name[128];		// zero terminated joint name
+486c486
+< 	char		name[];		// zero terminated joint name
+---
+> 	char		name[128];		// zero terminated joint name
+498c498
+< 	CapturyJointPacket	joints[];
+---
+> 	CapturyJointPacket	joints[128];
+509c509
+< 	char		blendShapeNames[];
+---
+> 	char		blendShapeNames[128];
+521c521
+< 	CapturyJointPacket	joints[];
+---
+> 	CapturyJointPacket	joints[128];
+573c573
+< 	uint16_t	angles[];
+---
+> 	uint16_t	angles[128];
+600c600
+< 	uint16_t	angles[];
+---
+> 	uint16_t	angles[128];
+631c631
+< 	float		values[];
+---
+> 	float		values[128];
+647c647
+< 	float		values[];
+---
+> 	float		values[128];
+656c656
+< 	float		values[];
+---
+> 	float		values[128];
+667c667
+< 	CapturyAngleData angles[];
+---
+> 	CapturyAngleData angles[128];
+761c761
+< 	char		data[];
+---
+> 	char		data[128];
+802c802
+< 	unsigned char	data[];	// width*height*3 bytes
+---
+> 	unsigned char	data[128];	// width*height*3 bytes
+882c882
+< 	float		eulerAngles[]; // 3x numIMUs floats
+---
+> 	float		eulerAngles[128]; // 3x numIMUs floats
+918c918
+< 	char		message[];
+---
+> 	char		message[128];

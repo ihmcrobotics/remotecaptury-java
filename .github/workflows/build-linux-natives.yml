@@ -1,0 +1,36 @@
+name: Build remotecaptury-java Linux natives
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: [ubuntu-20.04]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install build-essential g++ cmake git -y
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Check Java/Gradle versions
+        run: |
+          java --version
+          gradle --version
+      - name: Compile native library
+        run: |
+          bash cppbuild.bash
+      - name: Run tests
+        run: |
+          ./gradlew test
+      - name: Commit generated java and native libraries
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: '*.java *.so' # Only commit generated java from Linux
+          author_name: ihmc-rosie
+          author_email: rosie@ihmc.us
+          message: 'Rebuild natives for Linux'
+          push: true
