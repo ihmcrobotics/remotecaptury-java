@@ -9,6 +9,7 @@ import static us.ihmc.remotecaptury.global.remotecaptury.*;
 public class TestNativeLibraryLoads
 {
    private static final int ACTOR_ID = 30000;
+
    @Test
    public void testLibraryLoads()
    {
@@ -37,9 +38,8 @@ public class TestNativeLibraryLoads
       // Checks for actor
       int actorStatus = Captury_getActorStatus(ACTOR_ID);
       System.out.println("Actor Status: " + actorStatus);
-      boolean validActorStatus = (actorStatus == ACTOR_UNKNOWN | actorStatus == ACTOR_SCALING|
-                                  actorStatus == ACTOR_TRACKING | actorStatus == ACTOR_STOPPED|
-                                  actorStatus == ACTOR_DELETED);
+      boolean validActorStatus = (actorStatus == ACTOR_UNKNOWN | actorStatus == ACTOR_SCALING | actorStatus == ACTOR_TRACKING | actorStatus == ACTOR_STOPPED
+                                  | actorStatus == ACTOR_DELETED);
       assertTrue(validActorStatus);
 
       // Check to stop track
