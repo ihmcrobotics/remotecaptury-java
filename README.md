@@ -3,7 +3,7 @@ Java JNI bindings for Captury SDK "RemoteCaptury" API. Found here: https://captu
 
 ## Usage
 Supported platforms:
-- linux-x86_64 (Ubuntu 22.04 or similar)
+- linux-x86_64 (Ubuntu 20.04 or similar)
 - windows-x86_64 (Windows 10+)
 
 ### Gradle
