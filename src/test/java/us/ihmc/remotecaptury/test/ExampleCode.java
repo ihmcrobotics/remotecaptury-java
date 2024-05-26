@@ -104,5 +104,7 @@ public class ExampleCode
 
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
+      Captury_stopStreaming();
+      Captury_disconnect();
    }
 }
