@@ -1,5 +1,6 @@
 package us.ihmc.remotecaptury.test;
 
+import org.bytedeco.javacpp.BytePointer;
 import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
@@ -35,6 +36,31 @@ public class ExampleCode
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
+
+      // Captury SDK logging thread
+      new Thread(() ->
+      {
+         while (running)
+         {
+            BytePointer nextLogMessage = Captury_getNextLogMessage();
+
+            if (nextLogMessage != null && !nextLogMessage.isNull())
+            {
+               System.out.println("[CapturyLive] " + nextLogMessage.getString());
+
+               nextLogMessage.close();
+            }
+
+            try
+            {
+               Thread.sleep(10);
+            }
+            catch (InterruptedException e)
+            {
+               e.printStackTrace();
+            }
+         }
+      }, "CapturyLogPrinter").start();
 
       // Make sure that computer is disconnected from CapturyLive before initializing everything
       // Otherwise SigFaults happen :(
@@ -78,7 +104,5 @@ public class ExampleCode
 
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
-      Captury_stopStreaming();
-      Captury_disconnect();
    }
 }
