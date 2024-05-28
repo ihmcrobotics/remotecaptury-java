@@ -25,7 +25,17 @@ patch RemoteCaptury.cpp RemoteCaptury.cpp.patch
 mkdir build
 cd build
 
-cmake ..
+if [ "$MAC_CROSS_COMPILE_ARM" == "1" ]; then
+  cmake -DCMAKE_OSX_ARCHITECTURES="arm64" ..
+elif [ "$LINUX_CROSS_COMPILE_ARM" == "1" ]; then
+  cmake -DCMAKE_C_COMPILER=aarch64-linux-gnu-gcc \
+        -DCMAKE_CXX_COMPILER=aarch64-linux-gnu-g++ \
+        -DCMAKE_FIND_ROOT_PATH=/usr/aarch64-linux-gnu \
+        -DCMAKE_PROGRAM_PATH=/usr/aarch64-linux-gnu/bin \
+        ..
+else
+  cmake ..
+fi
 cmake --build . --config Release
 cmake --build . --target install
 
@@ -45,20 +55,54 @@ cp us/ihmc/remotecaptury/*.java ../src/main/java/us/ihmc/remotecaptury
 cp us/ihmc/remotecaptury/global/*.java ../src/main/java/us/ihmc/remotecaptury/global/
 
 #### JNI compilation ####
-java -jar javacpp.jar us/ihmc/remotecaptury/*.java us/ihmc/remotecaptury/global/*.java -d javainstall
+if [ "$MAC_CROSS_COMPILE_ARM" == "1" ]; then
+  java -jar javacpp.jar -properties macosx-arm64 us/ihmc/remotecaptury/*.java us/ihmc/remotecaptury/global/*.java -d javainstall
+elif [ "$LINUX_CROSS_COMPILE_ARM" == "1" ]; then
+  java -jar javacpp.jar -properties linux-arm64 -Dplatform.compiler=aarch64-linux-gnu-g++ us/ihmc/remotecaptury/*.java us/ihmc/remotecaptury/global/*.java -d javainstall
+else
+  java -jar javacpp.jar us/ihmc/remotecaptury/*.java us/ihmc/remotecaptury/global/*.java -d javainstall
+fi
 
 #### Copy shared libs to resources ####
 # Linux
+mkdir -p ../src/main/resources/remotecaptury-java/native/linux-x86_64
+mkdir -p ../src/main/resources/remotecaptury-java/native/linux-arm64
 if [ -f "javainstall/libjniremotecaptury.so" ]; then
-  cp javainstall/libjniremotecaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
+  if [ "$LINUX_CROSS_COMPILE_ARM" == "1" ]; then
+    cp javainstall/libjniremotecaptury.so ../src/main/resources/remotecaptury-java/native/linux-arm64
+  else
+    cp javainstall/libjniremotecaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
+  fi
 fi
 if [ -f "lib/libRemoteCaptury.so" ]; then
-  cp lib/libRemoteCaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
+  if [ "$LINUX_CROSS_COMPILE_ARM" == "1" ]; then
+    cp lib/libRemoteCaptury.so ../src/main/resources/remotecaptury-java/native/linux-arm64
+  else
+    cp lib/libRemoteCaptury.so ../src/main/resources/remotecaptury-java/native/linux-x86_64
+  fi
 fi
 # Windows
+mkdir -p ../src/main/resources/remotecaptury-java/native/windows-x86_64
 if [ -f "javainstall/jniremotecaptury.dll" ]; then
   cp javainstall/jniremotecaptury.dll ../src/main/resources/remotecaptury-java/native/windows-x86_64
 fi
 if [ -f "bin/RemoteCaptury.dll" ]; then
   cp bin/RemoteCaptury.dll ../src/main/resources/remotecaptury-java/native/windows-x86_64
+fi
+# macOS
+mkdir -p ../src/main/resources/remotecaptury-java/native/macos-x86_64
+mkdir -p ../src/main/resources/remotecaptury-java/native/macos-arm64
+if [ -f "javainstall/libjniremotecaptury.dylib" ]; then
+  if [ "$MAC_CROSS_COMPILE_ARM" == "1" ]; then
+    cp javainstall/libjniremotecaptury.dylib ../src/main/resources/remotecaptury-java/native/macos-arm64
+  else
+    cp javainstall/libjniremotecaptury.dylib ../src/main/resources/remotecaptury-java/native/macos-x86_64
+  fi
+fi
+if [ -f "lib/libRemoteCaptury.dylib" ]; then
+  if [ "$MAC_CROSS_COMPILE_ARM" == "1" ]; then
+    cp lib/libRemoteCaptury.dylib ../src/main/resources/remotecaptury-java/native/macos-arm64
+  else
+    cp lib/libRemoteCaptury.dylib ../src/main/resources/remotecaptury-java/native/macos-x86_64
+  fi
 fi
