@@ -68,12 +68,12 @@ public class ExampleCode
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
+      Captury_stopStreaming();
       Captury_disconnect();
-      Thread.sleep(2000);
+      Thread.sleep(5000);
       while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
          Captury_disconnect();
       }
-
       // Start tracking
       Captury_startTracking(ACTOR_ID, 0, 0, 720);
       // Initialize actor
@@ -85,10 +85,9 @@ public class ExampleCode
          {
             System.out.println("Snapping Actor");
             Captury_snapActor(0, 0, 720);
-
-               //In miliseconds C++ code was in seconds
-               Thread.sleep(3000);
-               Captury_getActors(actors);
+            //In miliseconds C++ code was in seconds
+            Thread.sleep(3000);
+            Captury_getActors(actors);
             }
             else
             {
@@ -100,11 +99,12 @@ public class ExampleCode
       Thread.sleep(10000);
       while (running)
       {
-         // Different transforms are based on line 130-174 of remotecaptury.java
+         // Each transform is listed in defaultLive.skel, lines 4-98
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
          // Converts from Global to Local rotation
          Captury_convertPoseToLocal(pose, ACTOR_ID);
-         float rot = pose.transforms().rotation(26);
+         int transformNum = 53;
+         float rot = pose.transforms().rotation(transformNum);
          System.out.println("getting rotation");
          System.out.println(rot);
          Thread.sleep(1);
