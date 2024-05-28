@@ -64,6 +64,9 @@ public class ExampleCode
          }
       }, "CapturyLogPrinter").start();
 
+      //Turns off printing all log at end as well
+      Captury_enablePrintf(0);
+
       // Disconnect CapturyLive
       Captury_disconnect();
       Thread.sleep(2000);
