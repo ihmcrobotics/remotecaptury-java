@@ -16,7 +16,16 @@ public class RemoteCapturyNativeLibrary implements NativeLibraryDescription
          {
             case WIN64 -> "windows-x86_64";
             case LINUX64 -> "linux-x86_64";
-            default -> "unknown";
+            case MACOSX64 -> "macos-x86_64";
+         };
+      }
+      else if (arch == Architecture.arm64)
+      {
+         archPackage = switch (os)
+         {
+            case WIN64 -> "windows-arm64"; // Currently unsupported
+            case LINUX64 -> "linux-arm64";
+            case MACOSX64 -> "macos-arm64";
          };
       }
 
@@ -35,6 +44,10 @@ public class RemoteCapturyNativeLibrary implements NativeLibraryDescription
          case WIN64 ->
          {
             return NativeLibraryWithDependencies.fromFilename("jniremotecaptury.dll", "RemoteCaptury.dll");
+         }
+         case MACOSX64 ->
+         {
+            return NativeLibraryWithDependencies.fromFilename("libjniremotecaptury.dylib", "libRemoteCaptury.dylib");
          }
       }
 
