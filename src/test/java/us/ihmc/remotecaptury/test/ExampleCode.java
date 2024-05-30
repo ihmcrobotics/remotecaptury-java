@@ -29,7 +29,6 @@ public class ExampleCode
          Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c0);
          Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c2);
          Captury_startStreaming(CAPTURY_STREAM_POSES);
-         Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
       }
 
    private static final int ACTOR_ID = 30000; // TODO: figure out where this comes from
@@ -68,12 +67,11 @@ public class ExampleCode
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
-      Captury_stopStreaming();
-      Captury_disconnect();
-      Thread.sleep(5000);
       while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
+         Captury_stopStreaming();
          Captury_disconnect();
       }
+      Thread.sleep(5000);
       // Start tracking
       Captury_startTracking(ACTOR_ID, 0, 0, 720);
       // Initialize actor
@@ -84,10 +82,10 @@ public class ExampleCode
          if (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
          {
             System.out.println("Snapping Actor");
-            Captury_snapActor(0, 0, 720);
-            //In miliseconds C++ code was in seconds
             Thread.sleep(3000);
             Captury_getActors(actors);
+            Captury_snapActor(0, 0, 720);
+            //In miliseconds C++ code was in seconds
             }
             else
             {
@@ -96,15 +94,13 @@ public class ExampleCode
             }
          }
 
-      Thread.sleep(10000);
+      Thread.sleep(5000);
       while (running)
       {
-         // Each transform is listed in defaultLive.skel, lines 4-98
+         // Each transform is listed in defaultLive.dofs, lines 4-75
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         // Converts from Global to Local rotation
-         Captury_convertPoseToLocal(pose, ACTOR_ID);
-         int transformNum = 53;
-         float rot = pose.transforms().rotation(transformNum);
+         int transformNum = 52;
+         float rot = pose.transforms().translation(transformNum);
          System.out.println("getting rotation");
          System.out.println(rot);
          Thread.sleep(1);
