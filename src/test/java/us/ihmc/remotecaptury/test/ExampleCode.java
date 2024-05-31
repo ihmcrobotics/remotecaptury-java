@@ -94,9 +94,6 @@ public class ExampleCode
             {
                connect();
                Thread.sleep(1000);
-               if(Captury_getConnectionStatus() == CAPTURY_CONNECTED){
-                  Thread.sleep(5000);
-               }
             }
          }
 
@@ -108,8 +105,10 @@ public class ExampleCode
          int transformNum = 18;
          Captury_convertPoseToLocal(pose, ACTOR_ID);
          float rot = pose.transforms().getPointer(transformNum).rotation().get();
-//         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(65).name().getString();
-//         System.out.println(jointName);
+
+         // Joint names are in unknown.skel after recording motion
+         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(65).name().getString();
+         System.out.println(jointName);
          System.out.println("getting rotation");
          System.out.println(rot);
          Thread.sleep(1);
