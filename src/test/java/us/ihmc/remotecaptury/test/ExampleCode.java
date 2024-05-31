@@ -68,6 +68,8 @@ public class ExampleCode
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
+      Captury_stopStreaming();
+      Captury_disconnect();
       while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
          Captury_stopStreaming();
          Captury_disconnect();
@@ -83,15 +85,18 @@ public class ExampleCode
          if (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
          {
             System.out.println("Snapping Actor");
-            Thread.sleep(3000);
-            Captury_getActors(actors);
             Captury_snapActor(0, 0, 720);
             //In miliseconds C++ code was in seconds
+            Thread.sleep(3000);
+            Captury_getActors(actors);
             }
             else
             {
                connect();
                Thread.sleep(1000);
+               if(Captury_getConnectionStatus() == CAPTURY_CONNECTED){
+                  Thread.sleep(5000);
+               }
             }
          }
 
@@ -100,9 +105,11 @@ public class ExampleCode
       {
          // Each transform is listed in defaultLive.dofs, lines 4-75
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         int transformNum = 21;
+         int transformNum = 18;
          Captury_convertPoseToLocal(pose, ACTOR_ID);
-         float rot = pose.transforms().rotation(transformNum);
+         float rot = pose.transforms().getPointer(transformNum).rotation().get();
+//         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(65).name().getString();
+//         System.out.println(jointName);
          System.out.println("getting rotation");
          System.out.println(rot);
          Thread.sleep(1);
