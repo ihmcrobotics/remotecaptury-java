@@ -36,8 +36,7 @@ elif [ "$LINUX_CROSS_COMPILE_ARM" == "1" ]; then
 else
   cmake ..
 fi
-cmake --build . --config Release
-cmake --build . --target install
+cmake --build . --target install --config Release
 
 popd
 #### Java generation ####
