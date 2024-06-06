@@ -3,6 +3,7 @@ package us.ihmc.remotecaptury.test;
 import org.bytedeco.javacpp.BytePointer;
 import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.CapturyPose;
+import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import static us.ihmc.remotecaptury.global.remotecaptury.*;
@@ -19,7 +20,7 @@ public class ExampleCode
       private static void connect()
       {
          System.out.println("Connecting...");
-         Captury_connect("10.100.5.52", (short) 2101);
+         Captury_connect("172.16.66.239", (short) 2101);
          Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36391a4);
          Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa363947a);
          Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa3639485);
@@ -89,27 +90,26 @@ public class ExampleCode
             //In miliseconds C++ code was in seconds
             Thread.sleep(3000);
             Captury_getActors(actors);
-            }
-            else
-            {
-               connect();
-               Thread.sleep(1000);
-            }
          }
+         else
+         {
+            connect();
+            Thread.sleep(1000);
+         }
+      }
 
       Thread.sleep(5000);
-      while (running)
+      System.out.println(actors.id());
+      while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
-         // Each transform is listed in defaultLive.dofs, lines 4-75
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         int transformNum = 18;
+         int transformNum = 12;
          Captury_convertPoseToLocal(pose, ACTOR_ID);
-         float rot = pose.transforms().getPointer(transformNum).rotation().get();
-
+         CapturyTransform transform = pose.transforms().getPointer(transformNum);
+         float rot = transform.rotation().get();
          // Joint names are in unknown.skel after recording motion
-         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(65).name().getString();
+         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(transformNum).name().getString();
          System.out.println(jointName);
-         System.out.println("getting rotation");
          System.out.println(rot);
          Thread.sleep(1);
       }
@@ -118,5 +118,6 @@ public class ExampleCode
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
       Captury_stopStreaming();
       Captury_disconnect();
+      connect();
    }
 }
