@@ -39,7 +39,7 @@ public class ExampleCode
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
-
+      Captury_connect("172.16.66.239", (short) 2101);
       // Captury SDK logging thread
       new Thread(() ->
       {
@@ -64,23 +64,23 @@ public class ExampleCode
             }
          }
       }, "CapturyLogPrinter").start();
-
+      Captury_disconnect();
+      Thread.sleep(3000);
       //Turns off printing all log at end as well
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
-      Captury_stopStreaming();
-      Captury_disconnect();
-      while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
-         Captury_stopStreaming();
-         Captury_disconnect();
-      }
-      Thread.sleep(5000);
+//      Captury_stopStreaming();
+//      Captury_disconnect();
+//      while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
+//         Captury_stopStreaming();
+//         Captury_disconnect();
+//      }
+//      Thread.sleep(5000);
       // Start tracking
       Captury_startTracking(ACTOR_ID, 0, 0, 720);
       // Initialize actor
       CapturyActor actors = new CapturyActor();
-
       while (Captury_getActorStatus(ACTOR_ID) == ACTOR_UNKNOWN)
       {
          if (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
