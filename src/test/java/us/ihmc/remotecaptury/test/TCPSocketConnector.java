@@ -1,5 +1,8 @@
 package us.ihmc.remotecaptury.test;
 
+import us.ihmc.remotecaptury.CapturyActor;
+import us.ihmc.remotecaptury.CapturyPose;
+
 import java.net.*;
 import java.io.*;
 
@@ -7,22 +10,30 @@ public class TCPSocketConnector
 {
    private ServerSocket serverSocket;
    private Socket clientSocket;
-   private PrintWriter out;
-   private BufferedReader in;
+   private ObjectOutputStream out;
+   private ObjectInputStream in;
 
-   public void start(int port) throws IOException
+   public void start(int port) throws IOException, ClassNotFoundException
    {
       serverSocket = new ServerSocket(port);
       clientSocket = serverSocket.accept();
-      out = new PrintWriter(clientSocket.getOutputStream(), true);
-      in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-      String greeting = in.readLine();
-      if("hello server".equals(greeting)){
-         out.println("hello client");
+      out = new ObjectOutputStream(clientSocket.getOutputStream());
+      in = new ObjectInputStream(clientSocket.getInputStream());
+      Object obj = in.readObject();
+      if (obj instanceof CapturyPose)
+      {
+         System.out.println("Recieved a CapturyPose Object");
       }
-      else{
-         out.println("unrecognised greeting");
+      else if(obj instanceof CapturyActor)
+      {
+         System.out.println("Recieved a CapturyActor Object");
       }
+      else
+      {
+         System.out.println("Recieved an Unrecognized object");
+      }
+
+      out.writeObject("Object recieved");
    }
 
    public void stop() throws IOException
@@ -32,7 +43,7 @@ public class TCPSocketConnector
       clientSocket.close();
       serverSocket.close();
    }
-   public static void main(String[] args) throws IOException
+   public static void main(String[] args) throws IOException, ClassNotFoundException
    {
       TCPSocketConnector server = new TCPSocketConnector();
       server.start(6666);
