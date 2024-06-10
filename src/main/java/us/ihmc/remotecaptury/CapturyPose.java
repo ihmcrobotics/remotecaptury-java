@@ -2,6 +2,7 @@
 
 package us.ihmc.remotecaptury;
 
+import java.io.Serializable;
 import java.nio.*;
 import org.bytedeco.javacpp.*;
 import org.bytedeco.javacpp.annotation.*;
@@ -10,7 +11,8 @@ import static us.ihmc.remotecaptury.global.remotecaptury.*;
 
 
 @Properties(inherit = us.ihmc.remotecaptury.RemoteCapturyConfig.class)
-public class CapturyPose extends Pointer {
+public class CapturyPose extends Pointer implements Serializable
+{
     static { Loader.load(); }
     /** Default native constructor. */
     public CapturyPose() { super((Pointer)null); allocate(); }
