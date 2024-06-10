@@ -51,7 +51,7 @@ public class TCPSocketClient
          float[] rotationArray = client.receiveFloatArray();
          System.out.println("Translation array received: " + java.util.Arrays.toString(translationArray));
          System.out.println("Rotation array received: " + java.util.Arrays.toString(rotationArray));
-         Thread.sleep(100);
+         Thread.sleep(1000);
       }
       client.stopConnection();
    }

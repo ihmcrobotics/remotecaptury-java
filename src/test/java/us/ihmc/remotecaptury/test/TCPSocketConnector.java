@@ -25,7 +25,6 @@ public class TCPSocketConnector
       }
       out.flush();
    }
-
    public void stopConnection() throws IOException {
       in.close();
       out.close();

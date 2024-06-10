@@ -43,7 +43,7 @@ public class ExampleCode
       RemoteCapturyNativeLibrary.load();
       Captury_connect("172.16.66.239", (short) 2101);
       TCPSocketConnector connector = new TCPSocketConnector();
-      connector.startConnection("172.16.66.240", 6666);
+      connector.startConnection("172.16.66.239", 6666);
       // Captury SDK logging thread
       new Thread(() ->
       {
@@ -104,9 +104,10 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
-      int[] translationNums = {11, 12, 36, 37};
+      int[] translationNums = {9, 10, 11, 12, 34, 35, 36, 37};
+      int[] rotationNums = {9, 11, 12, 34, 36, 37};
       float[] transaltionArray = new float[translationNums.length];
-      float[] rotationArray = new float[translationNums.length];
+      float[] rotationArray = new float[rotationNums.length];
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
 
@@ -115,9 +116,13 @@ public class ExampleCode
          CapturyTransform transform = pose.transforms();
          for(int i = 0; i < translationNums.length; i++)
          {
+            //TODO: Figure out how to get every translation and rotation from the different transforms
+            // Have to go all the way back to LeftArm to get a translation otherwise it is all rotations with respect to other objects
+            // Left Shoulder is the first one to have parent joint as global
             transaltionArray[i] = transform.getPointer(translationNums[i]).translation().get();
-            rotationArray[i] = transform.getPointer(translationNums[i]).rotation().get();
-
+         }
+         for(int j = 0; j < rotationNums.length; j++){
+            rotationArray[j] = transform.getPointer(rotationNums[j]).rotation().get();
          }
          //         int transformNum = 12;
 
@@ -130,7 +135,7 @@ public class ExampleCode
 //         Thread.sleep(1);
             connector.sendFloatArray(transaltionArray);
             connector.sendFloatArray(rotationArray);
-            Thread.sleep(100);
+            Thread.sleep(1000);
       }
 
       Thread.sleep(3000);
