@@ -111,6 +111,7 @@ public class ExampleCode
       {
 
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
+         Captury_convertPoseToLocal(pose, ACTOR_ID);
          CapturyTransform transform = pose.transforms();
          for(int i = 0; i < translationNums.length; i++)
          {
@@ -119,7 +120,7 @@ public class ExampleCode
 
          }
          //         int transformNum = 12;
-//         Captury_convertPoseToLocal(pose, ACTOR_ID);
+
 //         CapturyTransform transform = pose.transforms().getPointer(transformNum);
 //         float rot = transform.rotation().get();
 //         // Joint names are in unknown.skel after recording motion
@@ -129,6 +130,7 @@ public class ExampleCode
 //         Thread.sleep(1);
             connector.sendFloatArray(transaltionArray);
             connector.sendFloatArray(rotationArray);
+            Thread.sleep(100);
       }
 
       Thread.sleep(3000);
