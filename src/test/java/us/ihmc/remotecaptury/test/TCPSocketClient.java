@@ -1,5 +1,6 @@
 package us.ihmc.remotecaptury.test;
 
+import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
@@ -8,43 +9,53 @@ import java.net.*;
 
 public class TCPSocketClient
 {
+   private ServerSocket serverSocket;
    private Socket clientSocket;
    private ObjectOutputStream out;
    private ObjectInputStream in;
 
-   public void startConnection(String ip, int port) throws IOException
+   public void startConnection(int port) throws IOException
    {
-      clientSocket = new Socket(ip, port);
+      serverSocket = new ServerSocket(port);
+      clientSocket = serverSocket.accept();
       out = new ObjectOutputStream(clientSocket.getOutputStream());
       in = new ObjectInputStream(clientSocket.getInputStream());
    }
-   public String sendObject(Object obj) throws IOException, ClassNotFoundException
+
+   public Object receiveObject() throws IOException, ClassNotFoundException
    {
-      out.writeObject(obj);
-      out.flush();
-      String resp = in.readLine();
-      return resp;
+      Object obj = in.readObject();
+      return obj;
    }
 
-   public void stopConnect() throws IOException
+   public void stopConnection() throws IOException
    {
       in.close();
       out.close();
       clientSocket.close();
+      serverSocket.close();
    }
 
    public static void main(String[] args) throws IOException, ClassNotFoundException
    {
       RemoteCapturyNativeLibrary.load();
       TCPSocketClient client = new TCPSocketClient();
-      client.startConnection("172.16.66.239", 6666);
+      client.startConnection(6666);
 
-      CapturyPose pose = new CapturyPose();
-      // Initialize the CapturyPose object with data
+      Object receivedObject = client.receiveObject();
+      if (receivedObject instanceof CapturyPose)
+      {
+         System.out.println("Received a CapturyPose Object");
+      }
+      else if(receivedObject instanceof CapturyActor)
+      {
+         System.out.println("Received a CapturyActor Object");
+      }
+      else
+      {
+         System.out.println("Received an Unrecognized object");
+      }
 
-      String response = client.sendObject(pose);
-      System.out.println("Server response: " + response);
-
-      client.stopConnect();
+      client.stopConnection();
    }
 }

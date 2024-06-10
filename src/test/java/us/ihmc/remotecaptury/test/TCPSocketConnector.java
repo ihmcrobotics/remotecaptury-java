@@ -1,53 +1,49 @@
 package us.ihmc.remotecaptury.test;
 
-import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
-import java.net.*;
 import java.io.*;
+import java.net.*;
 
 public class TCPSocketConnector
 {
-   private ServerSocket serverSocket;
    private Socket clientSocket;
    private ObjectOutputStream out;
    private ObjectInputStream in;
 
-   public void start(int port) throws IOException, ClassNotFoundException
+   public void startConnection(String ip, int port) throws IOException
    {
-      RemoteCapturyNativeLibrary.load();
-      serverSocket = new ServerSocket(port);
-      clientSocket = serverSocket.accept();
+      clientSocket = new Socket(ip, port);
       out = new ObjectOutputStream(clientSocket.getOutputStream());
       in = new ObjectInputStream(clientSocket.getInputStream());
-      Object obj = in.readObject();
-      if (obj instanceof CapturyPose)
-      {
-         System.out.println("Recieved a CapturyPose Object");
-      }
-      else if(obj instanceof CapturyActor)
-      {
-         System.out.println("Recieved a CapturyActor Object");
-      }
-      else
-      {
-         System.out.println("Recieved an Unrecognized object");
-      }
-
-      out.writeObject("Object recieved");
    }
 
-   public void stop() throws IOException
+   public void sendObject(Object obj) throws IOException
+   {
+      out.writeObject(obj);
+      out.flush();
+   }
+
+   public void stopConnection() throws IOException
    {
       in.close();
       out.close();
       clientSocket.close();
-      serverSocket.close();
    }
+
    public static void main(String[] args) throws IOException, ClassNotFoundException
    {
-      TCPSocketConnector server = new TCPSocketConnector();
-      server.start(6666);
+      RemoteCapturyNativeLibrary.load();
+      TCPSocketConnector connector = new TCPSocketConnector();
+      connector.startConnection("localhost", 6666);
+
+      CapturyPose pose = new CapturyPose();
+      // Initialize the CapturyPose object with data
+
+      connector.sendObject(pose);
+      System.out.println("Object sent");
+
+      connector.stopConnection();
    }
 }

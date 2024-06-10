@@ -42,8 +42,8 @@ public class ExampleCode
       // Load native library
       RemoteCapturyNativeLibrary.load();
       Captury_connect("172.16.66.239", (short) 2101);
-      TCPSocketClient client = new TCPSocketClient();
-      client.startConnection("172.16.66.240", 6666);
+      TCPSocketConnector connector = new TCPSocketConnector();
+      connector.startConnection("172.16.66.240", 6666);
       // Captury SDK logging thread
       new Thread(() ->
       {
@@ -122,10 +122,9 @@ public class ExampleCode
             break;
          }
       }
-      String response = client.sendObject(pose);
-      System.out.println("Server response: " + response);
+      connector.sendObject(pose);
 
-      client.stopConnect();
+      connector.stopConnection();
 
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
