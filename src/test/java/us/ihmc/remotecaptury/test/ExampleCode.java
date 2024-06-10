@@ -6,6 +6,8 @@ import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
+import java.io.IOException;
+
 import static us.ihmc.remotecaptury.global.remotecaptury.*;
 
 public class ExampleCode
@@ -35,11 +37,13 @@ public class ExampleCode
 
    private static final int ACTOR_ID = 30000; // TODO: figure out where this comes from
 
-   public static void main(String[] args) throws InterruptedException
+   public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
       Captury_connect("172.16.66.239", (short) 2101);
+      TCPSocketClient client = new TCPSocketClient();
+      client.startConnection("172.16.66.240", 6666);
       // Captury SDK logging thread
       new Thread(() ->
       {
@@ -100,19 +104,28 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
+      CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
-         CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         int transformNum = 12;
-         Captury_convertPoseToLocal(pose, ACTOR_ID);
-         CapturyTransform transform = pose.transforms().getPointer(transformNum);
-         float rot = transform.rotation().get();
-         // Joint names are in unknown.skel after recording motion
-         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(transformNum).name().getString();
-         System.out.println(jointName);
-         System.out.println(rot);
-         Thread.sleep(1);
+         pose = Captury_getCurrentPose(ACTOR_ID);
+//         int transformNum = 12;
+//         Captury_convertPoseToLocal(pose, ACTOR_ID);
+//         CapturyTransform transform = pose.transforms().getPointer(transformNum);
+//         float rot = transform.rotation().get();
+//         // Joint names are in unknown.skel after recording motion
+//         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(transformNum).name().getString();
+//         System.out.println(jointName);
+//         System.out.println(rot);
+//         Thread.sleep(1);
+         if(pose != null)
+         {
+            break;
+         }
       }
+      String response = client.sendObject(pose);
+      System.out.println("Server response: " + response);
+
+      client.stopConnect();
 
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?

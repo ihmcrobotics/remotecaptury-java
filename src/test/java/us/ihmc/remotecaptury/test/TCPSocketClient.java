@@ -1,6 +1,7 @@
 package us.ihmc.remotecaptury.test;
 
 import us.ihmc.remotecaptury.CapturyPose;
+import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import java.io.*;
 import java.net.*;
@@ -34,8 +35,9 @@ public class TCPSocketClient
 
    public static void main(String[] args) throws IOException, ClassNotFoundException
    {
+      RemoteCapturyNativeLibrary.load();
       TCPSocketClient client = new TCPSocketClient();
-      client.startConnection("127.0.0.1", 6666);
+      client.startConnection("172.16.66.239", 6666);
 
       CapturyPose pose = new CapturyPose();
       // Initialize the CapturyPose object with data
