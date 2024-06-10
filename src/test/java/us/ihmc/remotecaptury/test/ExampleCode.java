@@ -104,14 +104,21 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
-      int translationNum = 12;
+      int[] translationNums = {11, 12, 36, 37};
+      float[] transaltionArray = new float[translationNums.length];
+      float[] rotationArray = new float[translationNums.length];
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
+
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
          CapturyTransform transform = pose.transforms();
-         float transformTranslation = transform.getPointer(translationNum).translation().get();
-         float transformRotation = transform.getPointer(translationNum).rotation().get();
-//         int transformNum = 12;
+         for(int i = 0; i < translationNums.length; i++)
+         {
+            transaltionArray[i] = transform.getPointer(translationNums[i]).translation().get();
+            rotationArray[i] = transform.getPointer(translationNums[i]).rotation().get();
+
+         }
+         //         int transformNum = 12;
 //         Captury_convertPoseToLocal(pose, ACTOR_ID);
 //         CapturyTransform transform = pose.transforms().getPointer(transformNum);
 //         float rot = transform.rotation().get();
@@ -120,8 +127,8 @@ public class ExampleCode
 //         System.out.println(jointName);
 //         System.out.println(rot);
 //         Thread.sleep(1);
-            connector.sendFloat(transformTranslation);
-            break;
+            connector.sendFloatArray(transaltionArray);
+            connector.sendFloatArray(rotationArray);
       }
 
       Thread.sleep(3000);
