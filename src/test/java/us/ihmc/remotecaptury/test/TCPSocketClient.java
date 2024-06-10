@@ -40,14 +40,19 @@ public class TCPSocketClient
       serverSocket.close();
    }
 
-   public static void main(String[] args) throws IOException
+   public static void main(String[] args) throws IOException, InterruptedException
    {
+      boolean running = true;
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
-
-      float[] recievedArray = client.receiveFloatArray();
-      System.out.println("Float array received: " + java.util.Arrays.toString(recievedArray));
-
+      while(running)
+      {
+         float[] translationArray = client.receiveFloatArray();
+         float[] rotationArray = client.receiveFloatArray();
+         System.out.println("Translation array received: " + java.util.Arrays.toString(translationArray));
+         System.out.println("Rotation array received: " + java.util.Arrays.toString(rotationArray));
+         Thread.sleep(100);
+      }
       client.stopConnection();
    }
 }
