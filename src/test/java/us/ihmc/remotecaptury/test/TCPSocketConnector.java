@@ -2,6 +2,7 @@ package us.ihmc.remotecaptury.test;
 
 import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.CapturyPose;
+import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import java.net.*;
 import java.io.*;
@@ -15,6 +16,7 @@ public class TCPSocketConnector
 
    public void start(int port) throws IOException, ClassNotFoundException
    {
+      RemoteCapturyNativeLibrary.load();
       serverSocket = new ServerSocket(port);
       clientSocket = serverSocket.accept();
       out = new ObjectOutputStream(clientSocket.getOutputStream());
