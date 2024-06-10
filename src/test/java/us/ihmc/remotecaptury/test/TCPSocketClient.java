@@ -2,6 +2,7 @@ package us.ihmc.remotecaptury.test;
 
 import us.ihmc.remotecaptury.CapturyActor;
 import us.ihmc.remotecaptury.CapturyPose;
+import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import java.io.*;
@@ -43,9 +44,19 @@ public class TCPSocketClient
       client.startConnection(6666);
 
       Object receivedObject = client.receiveObject();
-      if (receivedObject instanceof CapturyPose)
+      if (receivedObject instanceof CapturyTransform)
       {
          System.out.println("Received a CapturyPose Object");
+         // Always nullpointer when received
+         if(((CapturyTransform) receivedObject).getPointer() != null)
+         {
+            CapturyTransform transform = ((CapturyTransform) receivedObject);
+            float rot = transform.rotation().get();
+            System.out.println(rot);
+         }
+         else {
+            System.out.println("Pose is null");
+         }
       }
       else if(receivedObject instanceof CapturyActor)
       {
