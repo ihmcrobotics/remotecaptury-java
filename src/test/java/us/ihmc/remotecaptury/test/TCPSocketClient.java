@@ -22,15 +22,10 @@ public class TCPSocketClient
       in = new DataInputStream(clientSocket.getInputStream());
    }
 
-   public float[] receiveFloatArray() throws IOException
+   public float receiveFloat() throws IOException
    {
-      int length = in.readInt();
-      float[] array = new float[length];
-      for (int i = 0; i < length; i++)
-      {
-         array[i] = in.readFloat();
-      }
-      return array;
+      float f = in.readFloat();
+      return f;
    }
 
    public void stopConnection() throws IOException
@@ -45,8 +40,8 @@ public class TCPSocketClient
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
 
-      float[] recievedArray = client.receiveFloatArray();
-      System.out.println("Float array received: " + java.util.Arrays.toString(recievedArray));
+      float recievedFloat = client.receiveFloat();
+      System.out.println("Float received: " + recievedFloat);
 
       client.stopConnection();
    }

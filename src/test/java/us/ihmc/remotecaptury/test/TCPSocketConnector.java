@@ -18,11 +18,8 @@ public class TCPSocketConnector
       out = new DataOutputStream(clientSocket.getOutputStream());
       in = new DataInputStream(clientSocket.getInputStream());
    }
-   public void sendFloatArray(float[] array) throws IOException {
-      out.writeInt(array.length);
-      for (float f : array) {
-         out.writeFloat(f);
-      }
+   public void sendFloat(float f) throws IOException {
+      out.writeFloat(f);
       out.flush();
    }
 
