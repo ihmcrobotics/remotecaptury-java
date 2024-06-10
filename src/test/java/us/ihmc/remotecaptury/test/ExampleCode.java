@@ -43,7 +43,7 @@ public class ExampleCode
       RemoteCapturyNativeLibrary.load();
       Captury_connect("172.16.66.239", (short) 2101);
       TCPSocketConnector connector = new TCPSocketConnector();
-      connector.startConnection("172.16.66.240", 6666);
+      connector.startConnection("172.16.66.239", 6666);
       // Captury SDK logging thread
       new Thread(() ->
       {
@@ -104,10 +104,12 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
-      CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
-         pose = Captury_getCurrentPose(ACTOR_ID);
+         CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
+         CapturyTransform transform = pose.transforms();
+         float[] translationArray = transform.translation().asBuffer().array();
+         float[] roationArray = transform.rotation().asBuffer().array();
 //         int transformNum = 12;
 //         Captury_convertPoseToLocal(pose, ACTOR_ID);
 //         CapturyTransform transform = pose.transforms().getPointer(transformNum);
@@ -117,15 +119,13 @@ public class ExampleCode
 //         System.out.println(jointName);
 //         System.out.println(rot);
 //         Thread.sleep(1);
-         if(pose != null)
-         {
+            connector.sendFloatArray(translationArray);
             break;
-         }
       }
-      connector.sendObject(pose);
+
+      Thread.sleep(3000);
 
       connector.stopConnection();
-
       Captury_deleteActor(ACTOR_ID);
       Captury_stopTracking(ACTOR_ID); // TODO: does this need to come before deleteActor?
       Captury_stopStreaming();

@@ -10,62 +10,43 @@ import java.net.*;
 
 public class TCPSocketClient
 {
+
    private ServerSocket serverSocket;
    private Socket clientSocket;
-   private ObjectOutputStream out;
-   private ObjectInputStream in;
+   private DataInputStream in;
 
    public void startConnection(int port) throws IOException
    {
       serverSocket = new ServerSocket(port);
       clientSocket = serverSocket.accept();
-      out = new ObjectOutputStream(clientSocket.getOutputStream());
-      in = new ObjectInputStream(clientSocket.getInputStream());
+      in = new DataInputStream(clientSocket.getInputStream());
    }
 
-   public Object receiveObject() throws IOException, ClassNotFoundException
+   public float[] receiveFloatArray() throws IOException
    {
-      Object obj = in.readObject();
-      return obj;
+      int length = in.readInt();
+      float[] array = new float[length];
+      for (int i = 0; i < length; i++)
+      {
+         array[i] = in.readFloat();
+      }
+      return array;
    }
 
    public void stopConnection() throws IOException
    {
       in.close();
-      out.close();
       clientSocket.close();
       serverSocket.close();
    }
 
-   public static void main(String[] args) throws IOException, ClassNotFoundException
+   public static void main(String[] args) throws IOException
    {
-      RemoteCapturyNativeLibrary.load();
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
 
-      Object receivedObject = client.receiveObject();
-      if (receivedObject instanceof CapturyTransform)
-      {
-         System.out.println("Received a CapturyPose Object");
-         // Always nullpointer when received
-         if(((CapturyTransform) receivedObject).getPointer() != null)
-         {
-            CapturyTransform transform = ((CapturyTransform) receivedObject);
-            float rot = transform.rotation().get();
-            System.out.println(rot);
-         }
-         else {
-            System.out.println("Pose is null");
-         }
-      }
-      else if(receivedObject instanceof CapturyActor)
-      {
-         System.out.println("Received a CapturyActor Object");
-      }
-      else
-      {
-         System.out.println("Received an Unrecognized object");
-      }
+      float[] recievedArray = client.receiveFloatArray();
+      System.out.println("Float array received: " + java.util.Arrays.toString(recievedArray));
 
       client.stopConnection();
    }

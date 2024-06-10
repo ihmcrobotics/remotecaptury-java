@@ -11,7 +11,7 @@ import static us.ihmc.remotecaptury.global.remotecaptury.*;
 
 
 @Properties(inherit = us.ihmc.remotecaptury.RemoteCapturyConfig.class)
-public class CapturyPose extends Pointer implements Serializable
+public class CapturyPose extends Pointer
 {
     static { Loader.load(); }
     /** Default native constructor. */
