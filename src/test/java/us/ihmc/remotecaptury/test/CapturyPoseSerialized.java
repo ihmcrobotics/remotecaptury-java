@@ -57,40 +57,38 @@ public class CapturyPoseSerialized extends CapturyPose implements java.io.Serial
       for (int i = 0; i < numTransforms; i++) {
          transform.getPointer(i).put(transforms().getPointer(i));
          FloatBuffer translationBuffer = transform.translation().asBuffer();
-         for (int j = 0; j < 3; j++) {
-            out.writeDouble(translationBuffer.get(j));
-         }
          FloatBuffer rotationBuffer = transform.rotation().asBuffer();
-         for (int j = 0; j < 4; j++) {
-            out.writeDouble(rotationBuffer.get(j));
+         out.writeInt(translationBuffer.limit());
+         for (int j = 0; j < translationBuffer.limit(); j++) {
+            out.writeFloat(translationBuffer.get(j));
          }
-      }
-      int numBlendShapes = numBlendShapes();
-      out.writeInt(numBlendShapes);
-      FloatBuffer blendShapesBuffer = blendShapeActivations().asBuffer();
-      for (int i = 0; i < numBlendShapes; i++) {
-         out.writeFloat(blendShapesBuffer.get(i));
-      }
-   }
 
+         out.writeInt(rotationBuffer.limit());
+         for (int j = 0; j < rotationBuffer.limit(); j++) {
+            out.writeFloat(rotationBuffer.get(j));
+         }
+   }
+}
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
       in.defaultReadObject();
       int numTransforms = in.readInt();
       CapturyTransform transforms = new CapturyTransform(numTransforms);
       CapturyTransform transform = new CapturyTransform();
       for (int i = 0; i < numTransforms; i++) {
-         float[] translationArray = new float[3];
-         for (int j = 0; j < 3; j++) {
-            translationArray[j] = (float) in.readDouble();
+         int translationSize = in.readInt();
+         float[] translationArray = new float[translationSize];
+         for (int j = 0; j < translationSize; j++) {
+            translationArray[j] = in.readFloat();
          }
          FloatPointer translation = new FloatPointer(translationArray);
 
-         float[] rotationArray = new float[4];
-         for (int j = 0; j < 4; j++) {
-            rotationArray[j] = (float) in.readDouble();
+
+         int rotationSize = in.readInt();
+         float[] rotationArray = new float[rotationSize];
+         for (int j = 0; j < rotationSize; j++) {
+            rotationArray[j] = in.readFloat();
          }
          FloatPointer rotation = new FloatPointer(rotationArray);
-
 
          transform.translation(i, (int) translation.get());
          transform.rotation(i, (int) rotation.get());
