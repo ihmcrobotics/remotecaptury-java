@@ -9,6 +9,7 @@ import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 import java.io.IOException;
 
 import static us.ihmc.remotecaptury.global.remotecaptury.*;
+import static us.ihmc.remotecaptury.test.CapturyPoseSerialized.convertToSerializedPose;
 
 public class ExampleCode
 {
@@ -104,38 +105,13 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
-      int[] translationNums = {9, 10, 11, 12, 34, 35, 36, 37};
-      int[] rotationNums = {9, 11, 12, 34, 36, 37};
-      float[] transaltionArray = new float[translationNums.length];
-      float[] rotationArray = new float[rotationNums.length];
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
 
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         Captury_convertPoseToLocal(pose, ACTOR_ID);
-         CapturyTransform transform = pose.transforms();
-         for(int i = 0; i < translationNums.length; i++)
-         {
-            //TODO: Figure out how to get every translation and rotation from the different transforms
-            // Have to go all the way back to LeftArm to get a translation otherwise it is all rotations with respect to other objects
-            // Left Shoulder is the first one to have parent joint as global
-            transaltionArray[i] = transform.getPointer(translationNums[i]).translation().get();
-         }
-         for(int j = 0; j < rotationNums.length; j++){
-            rotationArray[j] = transform.getPointer(rotationNums[j]).rotation().get();
-         }
-         //         int transformNum = 12;
+         CapturyPoseSerialized serializedPose = convertToSerializedPose(pose);
+         connector.sendCapturyPoseSerialized(serializedPose);
 
-//         CapturyTransform transform = pose.transforms().getPointer(transformNum);
-//         float rot = transform.rotation().get();
-//         // Joint names are in unknown.skel after recording motion
-//         String jointName = Captury_getActor(ACTOR_ID).joints().getPointer(transformNum).name().getString();
-//         System.out.println(jointName);
-//         System.out.println(rot);
-//         Thread.sleep(1);
-            connector.sendFloatArray(transaltionArray);
-            connector.sendFloatArray(rotationArray);
-            Thread.sleep(1000);
       }
 
       Thread.sleep(3000);

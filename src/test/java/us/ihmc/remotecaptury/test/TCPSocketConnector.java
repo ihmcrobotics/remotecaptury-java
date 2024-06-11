@@ -1,33 +1,27 @@
 package us.ihmc.remotecaptury.test;
 
-import us.ihmc.remotecaptury.CapturyPose;
-import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
+import us.ihmc.remotecaptury.test.CapturyPoseSerialized;
 
 import java.io.*;
 import java.net.*;
 
-public class TCPSocketConnector
-{
-   private Socket clientSocket;
-   private DataOutputStream out;
-   private DataInputStream in;
+public class TCPSocketConnector {
 
-   public void startConnection(String ip, int port) throws IOException
-   {
+   private Socket clientSocket;
+   private ObjectOutputStream objectOutputStream;
+
+   public void startConnection(String ip, int port) throws IOException {
       clientSocket = new Socket(ip, port);
-      out = new DataOutputStream(clientSocket.getOutputStream());
-      in = new DataInputStream(clientSocket.getInputStream());
+      objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
    }
-   public void sendFloatArray(float[] array) throws IOException {
-      out.writeInt(array.length);
-      for (float f : array) {
-         out.writeFloat(f);
-      }
-      out.flush();
+
+   public void sendCapturyPoseSerialized(CapturyPoseSerialized capturyPoseSerialized) throws IOException {
+      objectOutputStream.writeObject(capturyPoseSerialized);
+      objectOutputStream.flush();
    }
+
    public void stopConnection() throws IOException {
-      in.close();
-      out.close();
+      objectOutputStream.close();
       clientSocket.close();
    }
 }
