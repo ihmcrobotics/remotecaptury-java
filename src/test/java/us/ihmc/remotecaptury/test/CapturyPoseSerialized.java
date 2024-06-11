@@ -8,9 +8,12 @@ import java.nio.FloatBuffer;
 import org.bytedeco.javacpp.FloatPointer;
 import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.CapturyTransform;
+import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 public class CapturyPoseSerialized implements java.io.Serializable {
-
+   static{
+      RemoteCapturyNativeLibrary.load();
+   }
    private static final long serialVersionUID = 1L;
 
    private int actor;
@@ -28,7 +31,10 @@ public class CapturyPoseSerialized implements java.io.Serializable {
       this.actor = pose.actor();
       this.timestamp = pose.timestamp();
       this.numTransforms = pose.numTransforms();
-      this.transforms = pose.transforms();
+      this.transforms = new CapturyTransform(numTransforms);
+      for (int i = 0; i < numTransforms; i++) {
+         this.transforms.getPointer(i).put(pose.transforms().getPointer(i));
+      }
       this.flags = pose.flags();
       this.numBlendShapes = pose.numBlendShapes();
       this.blendShapeActivations = new float[numBlendShapes];
