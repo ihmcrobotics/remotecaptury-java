@@ -16,6 +16,7 @@ public class CapturyPoseSerialized extends CapturyPose implements java.io.Serial
    public CapturyPoseSerialized() {
       super();
    }
+
    public static CapturyPoseSerialized convertToSerializedPose(CapturyPose pose) {
       CapturyPoseSerialized serializedPose = new CapturyPoseSerialized();
 
@@ -27,8 +28,10 @@ public class CapturyPoseSerialized extends CapturyPose implements java.io.Serial
       CapturyTransform originalTransforms = pose.transforms();
       CapturyTransform serializedTransforms = new CapturyTransform(serializedPose.numTransforms());
       for (int i = 0; i < serializedPose.numTransforms(); i++) {
-         serializedTransforms.position(i).put(originalTransforms.position(i));
-         serializedTransforms.put(originalTransforms);
+         CapturyTransform originalTransform = originalTransforms.position(i);
+         CapturyTransform serializedTransform = serializedTransforms.position(i);
+         serializedTransform.translation().put(originalTransform.translation(i));
+         serializedTransform.rotation().put(originalTransform.rotation(i));
       }
       serializedPose.transforms(serializedTransforms);
 
@@ -48,6 +51,19 @@ public class CapturyPoseSerialized extends CapturyPose implements java.io.Serial
 
    private void writeObject(ObjectOutputStream out) throws IOException {
       out.defaultWriteObject();
+      int numTransforms = numTransforms();
+      out.writeInt(numTransforms);
+      for (int i = 0; i < numTransforms; i++) {
+         CapturyTransform transform = transforms().position(i);
+         float[] translationArray = transform.translation().asBuffer().array();
+         for (double d : translationArray) {
+            out.writeDouble(d);
+         }
+         float[] rotationArray = transform.rotation().asBuffer().array();
+         for (double d : rotationArray) {
+            out.writeDouble(d);
+         }
+      }
       int numBlendShapes = numBlendShapes();
       out.writeInt(numBlendShapes);
       float[] blendShapesArray = new float[numBlendShapes];
@@ -56,9 +72,32 @@ public class CapturyPoseSerialized extends CapturyPose implements java.io.Serial
          out.writeFloat(blendShape);
       }
    }
-
+   private float[] toFloatArray(double[] doubleArray) {
+      float[] floatArray = new float[doubleArray.length];
+      for (int i = 0; i < doubleArray.length; i++) {
+         floatArray[i] = (float) doubleArray[i];
+      }
+      return floatArray;
+   }
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
       in.defaultReadObject();
+      int numTransforms = in.readInt();
+      CapturyTransform transforms = new CapturyTransform(numTransforms);
+      for (int i = 0; i < numTransforms; i++) {
+         double[] translationArray = new double[3];
+         for (int j = 0; j < 3; j++) {
+            translationArray[j] = in.readDouble();
+         }
+         FloatPointer translation = new FloatPointer(toFloatArray(translationArray));
+         double[] rotationArray = new double[4];
+         for (int j = 0; j < 4; j++) {
+            rotationArray[j] = in.readDouble();
+         }
+         FloatPointer rotation = new FloatPointer(toFloatArray(rotationArray));
+         transforms.position(i).translation((int) translation.get());
+         transforms.position(i).rotation((int) rotation.get());
+      }
+      transforms(transforms);
       int numBlendShapes = in.readInt();
       float[] blendShapesArray = new float[numBlendShapes];
       for (int i = 0; i < numBlendShapes; i++) {

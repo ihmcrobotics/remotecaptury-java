@@ -1,5 +1,6 @@
 package us.ihmc.remotecaptury.test;
 
+import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 import us.ihmc.remotecaptury.test.CapturyPoseSerialized;
 
 import java.io.*;
@@ -10,7 +11,6 @@ public class TCPSocketClient {
    private ServerSocket serverSocket;
    private Socket clientSocket;
    private ObjectInputStream objectInputStream;
-   private static CapturyPoseSerialized capturyPoseSerialized;
 
    public void startConnection(int port) throws IOException {
       serverSocket = new ServerSocket(port);
@@ -30,13 +30,13 @@ public class TCPSocketClient {
 
    public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException
    {
+      RemoteCapturyNativeLibrary.load();
       boolean running = true;
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
       while (running) {
-         capturyPoseSerialized = client.receiveCapturyPoseSerialized();
-         // Do whatever you want with the received CapturyPoseSerialized object
-         System.out.println("Received CapturyPoseSerialized object: " + capturyPoseSerialized);
+         CapturyPoseSerialized capturyPoseSerialized = client.receiveCapturyPoseSerialized();
+         System.out.println(capturyPoseSerialized.numTransforms());
          Thread.sleep(1000);
       }
       client.stopConnection();
