@@ -11,17 +11,35 @@ public class TCPSocketConnector {
    private ObjectOutputStream objectOutputStream;
 
    public void startConnection(String ip, int port) throws IOException {
-      clientSocket = new Socket(ip, port);
-      objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+      try {
+         clientSocket = new Socket(ip, port);
+         objectOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+      } catch (IOException e) {
+         closeConnection();
+         throw e;
+      }
    }
 
    public void sendCapturyPoseSerialized(CapturyPoseSerialized capturyPoseSerialized) throws IOException {
-      objectOutputStream.writeObject(capturyPoseSerialized);
-      objectOutputStream.flush();
+      try {
+         objectOutputStream.writeObject(capturyPoseSerialized);
+         objectOutputStream.flush();
+      } catch (IOException e) {
+         closeConnection();
+         throw e;
+      }
    }
 
    public void stopConnection() throws IOException {
-      objectOutputStream.close();
-      clientSocket.close();
+      closeConnection();
+   }
+
+   private void closeConnection() throws IOException {
+      if (objectOutputStream!= null) {
+         objectOutputStream.close();
+      }
+      if (clientSocket!= null) {
+         clientSocket.close();
+      }
    }
 }

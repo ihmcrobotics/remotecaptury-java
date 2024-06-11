@@ -9,7 +9,6 @@ import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 import java.io.IOException;
 
 import static us.ihmc.remotecaptury.global.remotecaptury.*;
-import static us.ihmc.remotecaptury.test.CapturyPoseSerialized.convertToSerializedPose;
 
 public class ExampleCode
 {
@@ -20,21 +19,21 @@ public class ExampleCode
       Runtime.getRuntime().addShutdownHook(new Thread(() -> running = false));
    }
 
-      private static void connect()
-      {
-         System.out.println("Connecting...");
-         Captury_connect("172.16.66.239", (short) 2101);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36391a4);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa363947a);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa3639485);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429bc);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429bd);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429be);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c0);
-         Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c2);
-         Captury_startStreaming(CAPTURY_STREAM_POSES);
-         Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
-      }
+   private static void connect()
+   {
+      System.out.println("Connecting...");
+      Captury_connect("172.16.66.239", (short) 2101);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36391a4);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa363947a);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa3639485);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429bc);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429bd);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429be);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c0);
+      Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c2);
+      Captury_startStreaming(CAPTURY_STREAM_POSES);
+      Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
+   }
 
    private static final int ACTOR_ID = 30000; // TODO: figure out where this comes from
 
@@ -42,47 +41,48 @@ public class ExampleCode
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
-      Captury_connect("172.16.66.239", (short) 2101);
       TCPSocketConnector connector = new TCPSocketConnector();
       connector.startConnection("172.16.66.239", 6666);
       // Captury SDK logging thread
       new Thread(() ->
-      {
-         while (running)
-         {
-            BytePointer nextLogMessage = Captury_getNextLogMessage();
+                 {
+                    while (running)
+                    {
+                       BytePointer nextLogMessage = Captury_getNextLogMessage();
 
-            if (nextLogMessage != null && !nextLogMessage.isNull())
-            {
-               System.out.println("[CapturyLive] " + nextLogMessage.getString());
+                       if (nextLogMessage!= null &&!nextLogMessage.isNull())
+                       {
+                          System.out.println("[CapturyLive] " + nextLogMessage.getString());
 
-               nextLogMessage.close();
-            }
+                          nextLogMessage.close();
+                       }
 
-            try
-            {
-               Thread.sleep(10);
-            }
-            catch (InterruptedException e)
-            {
-               e.printStackTrace();
-            }
-         }
-      }, "CapturyLogPrinter").start();
-      Captury_disconnect();
-      Thread.sleep(3000);
+                       try
+                       {
+                          Thread.sleep(10);
+                       }
+                       catch (InterruptedException e)
+                       {
+                          e.printStackTrace();
+                       }
+                    }
+                 }, "CapturyLogPrinter").start();
       //Turns off printing all log at end as well
+
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
-//      Captury_stopStreaming();
-//      Captury_disconnect();
-//      while(Captury_getConnectionStatus() != CAPTURY_DISCONNECTED){
-//         Captury_stopStreaming();
-//         Captury_disconnect();
-//      }
-//      Thread.sleep(5000);
+      Thread.sleep(3000);
+      Captury_stopStreaming();
+      Captury_disconnect();
+      while(Captury_getConnectionStatus()!= CAPTURY_DISCONNECTED){
+         Captury_stopStreaming();
+         Captury_disconnect();
+      }
+      Thread.sleep(5000);
       // Start tracking
+      connect();
+      Thread.sleep(3000);
       Captury_startTracking(ACTOR_ID, 0, 0, 720);
       // Initialize actor
       CapturyActor actors = new CapturyActor();
@@ -109,9 +109,10 @@ public class ExampleCode
       {
 
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         CapturyPoseSerialized serializedPose = convertToSerializedPose(pose);
+         CapturyPoseSerialized serializedPose = new CapturyPoseSerialized(pose);
+         System.out.println(serializedPose.numTransforms());
          connector.sendCapturyPoseSerialized(serializedPose);
-
+         Thread.sleep(1000);
       }
 
       Thread.sleep(3000);
