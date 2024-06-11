@@ -10,109 +10,100 @@ import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
-public class CapturyPoseSerialized implements java.io.Serializable {
+public class CapturyPoseSerialized extends CapturyPose implements java.io.Serializable {
    static{
       RemoteCapturyNativeLibrary.load();
    }
    private static final long serialVersionUID = 1L;
 
-   private int actor;
-   private long timestamp;
-   private int numTransforms;
-   private CapturyTransform transforms;
-   private int flags;
-   private int numBlendShapes;
-   private float[] blendShapeActivations;
-
    public CapturyPoseSerialized() {
+      super();
    }
 
-   public CapturyPoseSerialized(CapturyPose pose) {
-      this.actor = pose.actor();
-      this.timestamp = pose.timestamp();
-      this.numTransforms = pose.numTransforms();
-      this.transforms = new CapturyTransform(numTransforms);
-      for (int i = 0; i < numTransforms; i++) {
-         this.transforms.getPointer(i).put(pose.transforms().getPointer(i));
+   public static CapturyPoseSerialized convertToSerializedPose(CapturyPose pose) {
+      CapturyPoseSerialized serializedPose = new CapturyPoseSerialized();
+
+      serializedPose.actor(pose.actor());
+      serializedPose.timestamp(pose.timestamp());
+      serializedPose.numTransforms(pose.numTransforms());
+
+      // Copy the transforms
+      CapturyTransform serializedTransforms = new CapturyTransform(serializedPose.numTransforms());
+      for (int i = 0; i < serializedPose.numTransforms(); i++) {
+         serializedTransforms.getPointer(i).translation().put(pose.transforms().getPointer(i).translation());
+         serializedTransforms.getPointer(i).rotation().put(pose.transforms().getPointer(i).rotation());
       }
-      this.flags = pose.flags();
-      this.numBlendShapes = pose.numBlendShapes();
-      this.blendShapeActivations = new float[numBlendShapes];
-      FloatBuffer buffer = pose.blendShapeActivations().asBuffer();
-      for (int i = 0; i < numBlendShapes; i++) {
-         this.blendShapeActivations[i] = buffer.get(i);
+      serializedPose.transforms(serializedTransforms);
+
+      serializedPose.flags(pose.flags());
+      serializedPose.numBlendShapes(pose.numBlendShapes());
+
+      // Copy the blend shape activations
+      FloatBuffer originalBlendShapes = pose.blendShapeActivations().asBuffer();
+      FloatPointer serializedBlendShapes = new FloatPointer(originalBlendShapes.capacity());
+      for (int i = 0; i < originalBlendShapes.capacity(); i++) {
+         serializedBlendShapes.put(i, originalBlendShapes.get(i));
       }
-   }
+      serializedPose.blendShapeActivations(serializedBlendShapes);
 
-   public int actor() {
-      return actor;
-   }
-
-   public long timestamp() {
-      return timestamp;
-   }
-
-   public int numTransforms() {
-      return numTransforms;
-   }
-
-   public CapturyTransform transforms() {
-      return transforms;
-   }
-
-   public int flags() {
-      return flags;
-   }
-
-   public int numBlendShapes() {
-      return numBlendShapes;
-   }
-
-   public float[] blendShapeActivations() {
-      return blendShapeActivations;
+      return serializedPose;
    }
 
    private void writeObject(ObjectOutputStream out) throws IOException {
-      out.writeInt(actor);
-      out.writeLong(timestamp);
+      out.defaultWriteObject();
+      int numTransforms = numTransforms();
       out.writeInt(numTransforms);
+      CapturyTransform transform = new CapturyTransform();
       for (int i = 0; i < numTransforms; i++) {
-         out.writeFloat(transforms.getPointer(i).translation().get(0));
-         out.writeFloat(transforms.getPointer(i).translation().get(1));
-         out.writeFloat(transforms.getPointer(i).translation().get(2));
-         out.writeFloat(transforms.getPointer(i).rotation().get(0));
-         out.writeFloat(transforms.getPointer(i).rotation().get(1));
-         out.writeFloat(transforms.getPointer(i).rotation().get(2));
+         transform.getPointer(i).put(transforms().getPointer(i));
+         FloatBuffer translationBuffer = transform.translation().asBuffer();
+         for (int j = 0; j < 3; j++) {
+            out.writeDouble(translationBuffer.get(j));
+         }
+         FloatBuffer rotationBuffer = transform.rotation().asBuffer();
+         for (int j = 0; j < 4; j++) {
+            out.writeDouble(rotationBuffer.get(j));
+         }
       }
-      out.writeInt(flags);
+      int numBlendShapes = numBlendShapes();
       out.writeInt(numBlendShapes);
+      FloatBuffer blendShapesBuffer = blendShapeActivations().asBuffer();
       for (int i = 0; i < numBlendShapes; i++) {
-         out.writeFloat(blendShapeActivations[i]);
+         out.writeFloat(blendShapesBuffer.get(i));
       }
    }
 
-   private void readObject(ObjectInputStream in) throws IOException {
-      actor = in.readInt();
-      timestamp = in.readLong();
-      numTransforms = in.readInt();
-      transforms = new CapturyTransform(numTransforms);
-      CapturyTransform transform = new CapturyTransform(numTransforms);
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+      in.defaultReadObject();
+      int numTransforms = in.readInt();
+      CapturyTransform transforms = new CapturyTransform(numTransforms);
+      CapturyTransform transform = new CapturyTransform();
       for (int i = 0; i < numTransforms; i++) {
-         float[] translation = new float[3];
-         float[] rotation = new float[3];
+         float[] translationArray = new float[3];
          for (int j = 0; j < 3; j++) {
-            translation[j] = in.readFloat();
-            rotation[j] = in.readFloat();
+            translationArray[j] = (float) in.readDouble();
          }
-         transform.getPointer(i).translation().put(translation);
-         transform.getPointer(i).rotation().put(rotation);
-         transforms.getPointer(i).put(transform);
+         FloatPointer translation = new FloatPointer(translationArray);
+
+         float[] rotationArray = new float[4];
+         for (int j = 0; j < 4; j++) {
+            rotationArray[j] = (float) in.readDouble();
+         }
+         FloatPointer rotation = new FloatPointer(rotationArray);
+
+
+         transform.translation(i, (int) translation.get());
+         transform.rotation(i, (int) rotation.get());
       }
-      flags = in.readInt();
-      numBlendShapes = in.readInt();
-      blendShapeActivations = new float[numBlendShapes];
+      transforms(transform);
+
+      int numBlendShapes = in.readInt();
+      float[] blendShapesArray = new float[numBlendShapes];
       for (int i = 0; i < numBlendShapes; i++) {
-         blendShapeActivations[i] = in.readFloat();
+         blendShapesArray[i] = in.readFloat();
       }
+      FloatPointer blendShapesPointer = new FloatPointer(blendShapesArray);
+      blendShapeActivations(blendShapesPointer);
    }
+
 }

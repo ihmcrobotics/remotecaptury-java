@@ -109,7 +109,7 @@ public class ExampleCode
       {
 
          CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
-         CapturyPoseSerialized serializedPose = new CapturyPoseSerialized(pose);
+         CapturyPoseSerialized serializedPose = CapturyPoseSerialized.convertToSerializedPose(pose);
          System.out.println(serializedPose.numTransforms());
          connector.sendCapturyPoseSerialized(serializedPose);
          Thread.sleep(1000);
