@@ -1,5 +1,6 @@
 package us.ihmc.remotecaptury.test;
 
+import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 import us.ihmc.remotecaptury.test.CapturyPoseSerialized;
 
@@ -52,14 +53,18 @@ public class TCPSocketClient {
       }
    }
 
-   public static void main(String[] args) throws IOException, ClassNotFoundException {
+   public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException
+   {
       RemoteCapturyNativeLibrary.load();
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
+      CapturyTransform transforms = new CapturyTransform();
       while (true) {
          CapturyPoseSerialized capturyPoseSerialized = client.receiveCapturyPoseSerialized();
+         transforms.put(capturyPoseSerialized.transforms());
          // Process received CapturyPoseSerialized object here
-         System.out.println(capturyPoseSerialized.numTransforms());
+         System.out.println(transforms.translation().get());
+         Thread.sleep(1000);
       }
    }
 }
