@@ -28,10 +28,7 @@ public class CapturyPoseSerialized implements java.io.Serializable {
       this.actor = pose.actor();
       this.timestamp = pose.timestamp();
       this.numTransforms = pose.numTransforms();
-      this.transforms = new CapturyTransform(numTransforms);
-      for (int i = 0; i < numTransforms; i++) {
-         this.transforms.getPointer(i).put(pose.transforms().getPointer(i));
-      }
+      this.transforms = pose.transforms();
       this.flags = pose.flags();
       this.numBlendShapes = pose.numBlendShapes();
       this.blendShapeActivations = new float[numBlendShapes];
