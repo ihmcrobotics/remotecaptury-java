@@ -32,7 +32,7 @@ public class ExampleCode
       Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c0);
       Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c2);
       Captury_startStreaming(CAPTURY_STREAM_POSES);
-      Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
+//      Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
    }
 
    private static final int ACTOR_ID = 30000; // TODO: figure out where this comes from
@@ -118,7 +118,7 @@ public class ExampleCode
          System.out.println(serializedPose.numTransforms());
          connector.sendCapturyPoseSerialized(serializedPose);
          Captury_freePose(pose);
-         Thread.sleep(2000);
+         Thread.sleep(10);
       }
 
       Thread.sleep(3000);
