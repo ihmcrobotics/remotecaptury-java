@@ -61,9 +61,9 @@ public class TCPSocketClient {
          // Process received CapturyPoseSerialized object here
          if(capturyPoseSerialized != null)
          {
-            System.out.println(capturyPoseSerialized.numTransforms());
+            System.out.println(capturyPoseSerialized.transforms().getPointer(12).rotation().get(1));
          }
-         Thread.sleep(2000);
+         Thread.sleep(10);
       }
    }
 }
