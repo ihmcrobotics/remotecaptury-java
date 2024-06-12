@@ -1,5 +1,11 @@
 package us.ihmc.remotecaptury;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pool;
+import us.ihmc.rdx.tools.RDXModelBuilder;
+import us.ihmc.rdx.tools.RDXModelInstance;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import java.io.*;
@@ -10,6 +16,8 @@ public class TCPSocketClient {
    private ServerSocket serverSocket;
    private Socket clientSocket;
    private ObjectInputStream objectInputStream;
+   private CapturyPoseSerialized capturyPoseSerialized;
+   private RDXModelInstance handObject;
 
    public void startConnection(int port) {
       try
@@ -63,13 +71,20 @@ public class TCPSocketClient {
       }
    }
 
-   public static CapturyPoseSerialized updatePose(TCPSocketClient client)
+   public void updatePose(TCPSocketClient client)
    {
       RemoteCapturyNativeLibrary.load();
-      CapturyPoseSerialized capturyPoseSerialized = null;
+       capturyPoseSerialized = null;
       try
       {
          capturyPoseSerialized = client.receiveCapturyPoseSerialized();
+         if(handObject == null)
+         {
+            handObject = new RDXModelInstance(RDXModelBuilder.createBox(4, 4, 4, new Color(0x870707ff)));
+         }
+         handObject.transform.setTranslation(capturyPoseSerialized.transforms().getPointer(12).translation().get(0), capturyPoseSerialized.transforms().getPointer(12).translation().get(1), capturyPoseSerialized.transforms().getPointer(12).translation().get(2));
+         handObject.transform.setFromEulerAnglesRad(capturyPoseSerialized.transforms().getPointer(12).rotation().get(0), capturyPoseSerialized.transforms().getPointer(12).rotation().get(1), capturyPoseSerialized.transforms().getPointer(12).rotation().get(2));
+
       }
       catch (IOException e)
       {
@@ -88,6 +103,13 @@ public class TCPSocketClient {
       {
          throw new RuntimeException(e);
       }
-      return capturyPoseSerialized;
+
+   }
+   public void getRenderables(Array<Renderable> renderables, Pool<Renderable> pool)
+   {
+      if(handObject != null)
+      {
+         handObject.getRenderables(renderables, pool);
+      }
    }
 }
