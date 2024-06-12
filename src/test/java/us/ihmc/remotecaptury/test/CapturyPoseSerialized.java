@@ -9,6 +9,8 @@ import org.bytedeco.javacpp.FloatPointer;
 import us.ihmc.remotecaptury.CapturyPose;
 import us.ihmc.remotecaptury.CapturyTransform;
 
+import static us.ihmc.remotecaptury.global.remotecaptury.*;
+
 public class CapturyPoseSerialized implements java.io.Serializable {
 
    private static final long serialVersionUID = 1L;
@@ -93,7 +95,6 @@ public class CapturyPoseSerialized implements java.io.Serializable {
       timestamp = in.readLong();
       numTransforms = in.readInt();
       transforms = new CapturyTransform(numTransforms);
-      CapturyTransform transform = new CapturyTransform(numTransforms);
       for (int i = 0; i < numTransforms; i++) {
          float[] translation = new float[3];
          float[] rotation = new float[3];
@@ -101,9 +102,8 @@ public class CapturyPoseSerialized implements java.io.Serializable {
             translation[j] = in.readFloat();
             rotation[j] = in.readFloat();
          }
-         transform.getPointer(i).translation().put(translation);
-         transform.getPointer(i).rotation().put(rotation);
-         transforms.getPointer(i).put(transform);
+         transforms.getPointer(i).translation().put(translation);
+         transforms.getPointer(i).rotation().put(rotation);
       }
       flags = in.readInt();
       numBlendShapes = in.readInt();
