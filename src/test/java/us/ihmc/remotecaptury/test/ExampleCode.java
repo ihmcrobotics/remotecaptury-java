@@ -41,8 +41,7 @@ public class ExampleCode
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
-      TCPSocketConnector connector = new TCPSocketConnector();
-      connector.startConnection("172.16.66.239", 6666);
+
       // Captury SDK logging thread
       new Thread(() ->
                  {
@@ -67,8 +66,14 @@ public class ExampleCode
                        }
                     }
                  }, "CapturyLogPrinter").start();
+      //Connects to CapturyLive and the TCPSocket
+      connect();
+      while(Captury_getConnectionStatus() != CAPTURY_CONNECTED){
+         connect();
+      }
+      TCPSocketConnector connector = new TCPSocketConnector();
+      connector.startConnection("172.16.66.240" , 6666);
       //Turns off printing all log at end as well
-
       Captury_enablePrintf(0);
 
       // Disconnect CapturyLive
@@ -112,7 +117,8 @@ public class ExampleCode
          CapturyPoseSerialized serializedPose = new CapturyPoseSerialized(pose);
          System.out.println(serializedPose.numTransforms());
          connector.sendCapturyPoseSerialized(serializedPose);
-         Thread.sleep(1000);
+         Captury_freePose(pose);
+         Thread.sleep(2000);
       }
 
       Thread.sleep(3000);
