@@ -11,28 +11,29 @@ public class TCPSocketClient {
 
    private ServerSocket serverSocket;
    private Socket clientSocket;
-   private BufferedInputStream bufferedInputStream;
    private ObjectInputStream objectInputStream;
 
    public void startConnection(int port) throws IOException {
       serverSocket = new ServerSocket(port);
       clientSocket = serverSocket.accept();
-      bufferedInputStream = new BufferedInputStream(clientSocket.getInputStream());
-      objectInputStream = new ObjectInputStream(bufferedInputStream);
+      objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
    }
 
    public CapturyPoseSerialized receiveCapturyPoseSerialized() throws IOException, ClassNotFoundException {
       CapturyPoseSerialized capturyPoseSerialized;
       try {
          capturyPoseSerialized = (CapturyPoseSerialized) objectInputStream.readObject();
-      } catch (ClassNotFoundException e) {
+      }
+      catch (ClassNotFoundException e) {
          throw e;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
          closeSockets();
          throw e;
       }
       return capturyPoseSerialized;
    }
+
 
    public void stopConnection() throws IOException {
       closeSockets();
@@ -41,9 +42,6 @@ public class TCPSocketClient {
    private void closeSockets() throws IOException {
       if (objectInputStream!= null) {
          objectInputStream.close();
-      }
-      if (bufferedInputStream!= null) {
-         bufferedInputStream.close();
       }
       if (clientSocket!= null) {
          clientSocket.close();
@@ -58,13 +56,14 @@ public class TCPSocketClient {
       RemoteCapturyNativeLibrary.load();
       TCPSocketClient client = new TCPSocketClient();
       client.startConnection(6666);
-      CapturyTransform transforms = new CapturyTransform();
       while (true) {
          CapturyPoseSerialized capturyPoseSerialized = client.receiveCapturyPoseSerialized();
-         transforms.put(capturyPoseSerialized.transforms());
          // Process received CapturyPoseSerialized object here
-         System.out.println(transforms.translation().get());
-         Thread.sleep(1000);
+         if(capturyPoseSerialized != null)
+         {
+            System.out.println(capturyPoseSerialized.numTransforms());
+         }
+         Thread.sleep(2000);
       }
    }
 }
