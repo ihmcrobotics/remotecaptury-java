@@ -1,6 +1,4 @@
-package us.ihmc.remotecaptury.test;
-
-import us.ihmc.remotecaptury.test.CapturyPoseSerialized;
+package us.ihmc.remotecaptury;
 
 import java.io.*;
 import java.net.*;

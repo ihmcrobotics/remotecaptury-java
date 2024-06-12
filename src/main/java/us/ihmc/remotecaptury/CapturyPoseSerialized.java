@@ -1,15 +1,9 @@
-package us.ihmc.remotecaptury.test;
+package us.ihmc.remotecaptury;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.FloatBuffer;
-
-import org.bytedeco.javacpp.FloatPointer;
-import us.ihmc.remotecaptury.CapturyPose;
-import us.ihmc.remotecaptury.CapturyTransform;
-
-import static us.ihmc.remotecaptury.global.remotecaptury.*;
 
 public class CapturyPoseSerialized implements java.io.Serializable {
 

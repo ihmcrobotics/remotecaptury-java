@@ -1,9 +1,6 @@
-package us.ihmc.remotecaptury.test;
+package us.ihmc.remotecaptury;
 
 import org.bytedeco.javacpp.BytePointer;
-import us.ihmc.remotecaptury.CapturyActor;
-import us.ihmc.remotecaptury.CapturyPose;
-import us.ihmc.remotecaptury.CapturyTransform;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
 
 import java.io.IOException;
