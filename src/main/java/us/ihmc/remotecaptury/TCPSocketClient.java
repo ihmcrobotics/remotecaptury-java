@@ -1,7 +1,6 @@
 package us.ihmc.remotecaptury;
 
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
-import us.ihmc.remotecaptury.CapturyPoseSerialized;
 
 import java.io.*;
 import java.net.*;
@@ -80,11 +79,7 @@ public class TCPSocketClient {
       {
          throw new RuntimeException(e);
       }
-      // Process received CapturyPoseSerialized object here
-      if(capturyPoseSerialized != null)
-      {
-         System.out.println(capturyPoseSerialized.transforms().getPointer(12).rotation().get(1));
-      }
+
       try
       {
          Thread.sleep(10);
