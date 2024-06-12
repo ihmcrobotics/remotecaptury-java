@@ -4,6 +4,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pool;
+import us.ihmc.euclid.geometry.interfaces.Pose3DReadOnly;
+import us.ihmc.euclid.geometry.interfaces.Pose3DBasics;
+import us.ihmc.euclid.referenceFrame.FramePose3D;
+import us.ihmc.euclid.transform.RigidBodyTransform;
 import us.ihmc.rdx.tools.RDXModelBuilder;
 import us.ihmc.rdx.tools.RDXModelInstance;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
@@ -18,10 +22,13 @@ public class TCPSocketClient {
    private ObjectInputStream objectInputStream;
    private CapturyPoseSerialized capturyPoseSerialized;
    private RDXModelInstance handObject;
+   private RigidBodyTransform handTransform = new RigidBodyTransform();
+   private FramePose3D handFramePose = new FramePose3D();
 
    public void startConnection(int port) {
       try
       {
+         System.out.println("TCP Socket Client Connecting...");
          serverSocket = new ServerSocket(port);
          clientSocket = serverSocket.accept();
          objectInputStream = new ObjectInputStream(clientSocket.getInputStream());
@@ -80,10 +87,17 @@ public class TCPSocketClient {
          capturyPoseSerialized = client.receiveCapturyPoseSerialized();
          if(handObject == null)
          {
-            handObject = new RDXModelInstance(RDXModelBuilder.createBox(4, 4, 4, new Color(0x870707ff)));
+            handObject = new RDXModelInstance(RDXModelBuilder.createBox(0.1F, 0.2F, 0.1F, new Color(0x870707ff)));
          }
-         handObject.transform.setTranslation(capturyPoseSerialized.transforms().getPointer(12).translation().get(0), capturyPoseSerialized.transforms().getPointer(12).translation().get(1), capturyPoseSerialized.transforms().getPointer(12).translation().get(2));
-         handObject.transform.setFromEulerAnglesRad(capturyPoseSerialized.transforms().getPointer(12).rotation().get(0), capturyPoseSerialized.transforms().getPointer(12).rotation().get(1), capturyPoseSerialized.transforms().getPointer(12).rotation().get(2));
+
+         handTransform.setRotationYawPitchRollAndZeroTranslation(capturyPoseSerialized.transforms().getPointer(12).rotation().get(0), capturyPoseSerialized.transforms().getPointer(12).rotation().get(1), capturyPoseSerialized.transforms().getPointer(12).rotation().get(2));
+         handTransform.setTranslationAndIdentityRotation(capturyPoseSerialized.transforms().getPointer(12).translation().get(0), capturyPoseSerialized.transforms().getPointer(12).translation().get(1), capturyPoseSerialized.transforms().getPointer(12).translation().get(2));
+         handFramePose.set(handTransform);
+         System.out.println(capturyPoseSerialized.transforms().getPointer(12).translation().get(0));
+         handObject.setPoseInWorldFrame(handFramePose);
+         System.out.println(handFramePose.getTranslationX());
+         //handObject.transform.setTranslation(capturyPoseSerialized.transforms().getPointer(12).translation().get(0), capturyPoseSerialized.transforms().getPointer(12).translation().get(1), capturyPoseSerialized.transforms().getPointer(12).translation().get(2));
+         //handObject.transform.setFromEulerAnglesRad(capturyPoseSerialized.transforms().getPointer(12).rotation().get(0), capturyPoseSerialized.transforms().getPointer(12).rotation().get(1), capturyPoseSerialized.transforms().getPointer(12).rotation().get(2));
 
       }
       catch (IOException e)
