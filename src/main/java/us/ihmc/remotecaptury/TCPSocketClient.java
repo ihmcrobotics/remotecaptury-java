@@ -8,13 +8,9 @@ import us.ihmc.euclid.referenceFrame.FramePose3D;
 import us.ihmc.euclid.referenceFrame.ReferenceFrame;
 import us.ihmc.euclid.referenceFrame.tools.ReferenceFrameTools;
 import us.ihmc.euclid.transform.RigidBodyTransform;
-import us.ihmc.euclid.transform.interfaces.RigidBodyTransformReadOnly;
-import us.ihmc.euclid.tuple3D.Point3D;
-import us.ihmc.euclid.yawPitchRoll.YawPitchRoll;
 import us.ihmc.rdx.tools.RDXModelInstance;
 import us.ihmc.rdx.ui.graphics.RDXReferenceFrameGraphic;
 import us.ihmc.remotecaptury.library.RemoteCapturyNativeLibrary;
-import us.ihmc.robotics.referenceFrames.MutableReferenceFrame;
 
 import java.io.*;
 import java.net.*;
@@ -28,10 +24,9 @@ public class TCPSocketClient {
    private final ObjectMap<String, RDXReferenceFrameGraphic> renderableMap = new ObjectMap<>(69);
    private final ObjectMap<String, ReferenceFrame> referenceFrameObjectMap = new ObjectMap<>(69);
    private final float[] startingTranslation = {0, 0, 0};
-   private final float GLOBALSIZECHANGE = 0.0007385F;
+   private final float GLOBALSIZECHANGE = 0.0025F;
    private final int STARTINGTRANSFORMNUM = 0;
-   private final String[] jointNames = {"Hips", "Spine", "Spine1", "Spine2", "Spine3", "Spine4", "Neck", "Head", "HeadEE", "LeftShoulder", "LeftArm", "LeftForeArm", "LeftHand", "LeftHandThumb1", "LeftHandThumb2", "LeftHandThumb3", "LeftHandThumbEE", "LeftHandIndex1", "LeftHandIndex2", "LeftHandIndex3", "LeftHandIndexEE", "LeftHandMiddle1", "LeftHandMiddle2", "LeftHandMiddle3", "LeftHandMiddleEE", "LeftHandRing1", "LeftHandRing2", "LeftHandRing3", "LeftHandRingEE", "LeftHandPinky1", "LeftHandPinky2", "LeftHandPinky3", "LeftHandPinkyEE", "LeftHandEE", "RightShoulder", "RightArm", "RightForeArm", "RightHand", "RightHandThumb1", "RightHandThumb2", "RightHandThumb3", "RightHandThumbEE", "RightHandIndex1", "RightHandIndex2", "RightHandIndex3", "RightHandIndexEE", "RightHandMiddle1", "RightHandMiddle2", "RightHandMiddle3", "RightHandMiddleEE", "RightHandRing1", "RightHandRing2", "RightHandRing3", "RightHandRingEE", "RightHandPinky1", "RightHandPinky2", "RightHandPinky3", "RightHandPinkyEE", "RightHandEE", "LeftUpLeg", "LeftLeg", "LeftFoot", "LeftToeBase", "LeftFootEE", "RightUpLeg", "RightLeg", "RightFoot", "RightToeBase", "RightFootEE"};
-
+   private final String[] jointNames = {"Root_tx","Root_ty","Root_tz","Root_ry","Root_rz","Root_rx","GlobalScale","Spine4_ry","Spine4_rz","Spine4_rx","Spine3_ty","Spine3_ry","Spine3_rz","Spine3_rx","Spine2_ty","Spine2_ry","Spine2_rz","Spine2_rx","Spine1_ty","Spine1_ry","Spine1_rz","Spine1_rx","Spine_ty","Spine_ry","Spine_rz","Spine_rx","Neck_ry","Neck_rz","Neck_rx","Head_ry","Head_rz","Head_rx","HeadEE","LeftShoulder_ry","LeftShoulder_rz","LeftArm_tx","LeftArm_rx","LeftArm_rz","LeftArm_ry","LeftArmScale","LeftForeArm_rx","LeftForeArm_rz","LeftForeArmScale","LeftForeArmRoll","LeftHand_rx","LeftHand_ry","LeftHandEE","RightShoulder_ry","RightShoulder_rz","RightArm_tx","RightArm_rx","RightArm_rz","RightArm_ry","RightArmScale","RightForeArm_rx","RightForeArm_rz","RightForeArmScale","RightForeArmRoll","RightHand_rx","RightHand_ry","RightHandEE","LeftUpLeg_tx","LeftUpLeg_ty","LeftUpLeg_rx","LeftUpLeg_rz","LeftUpLeg_ry","LeftLegScale","LeftLeg_rx","LeftLeg_ry","LeftLeg_rz","LeftLowLegScale","LeftFoot_rx","LeftFoot_ry","LeftFoot_rz","LeftFootScale","LeftToeBase_rx","LeftFootEE","RightUpLeg_tx","RightUpLeg_ty","RightUpLeg_rx","RightUpLeg_rz","RightUpLeg_ry","RightLegScale","RightLeg_rx","RightLeg_ry","RightLeg_rz","RightLowLegScale","RightFoot_rx","RightFoot_ry","RightFoot_rz","RightFootScale","RightToeBase_rx","RightFootEE"};
    public void startConnection(int port) {
       try
       {
@@ -100,16 +95,26 @@ public class TCPSocketClient {
          for(int j = STARTINGTRANSFORMNUM; j < jointNames.length+STARTINGTRANSFORMNUM; j++)
          {
             RigidBodyTransform transform = new RigidBodyTransform();
-            transform.getRotation().setYawPitchRoll(Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(0)*GLOBALSIZECHANGE),
-                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(1)*GLOBALSIZECHANGE),
-                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(2)*GLOBALSIZECHANGE));
+            transform.getRotation().setYawPitchRoll(Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(0)),
+                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(1)),
+                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(2)));
             transform.getTranslation().setX(capturyPoseSerialized.transforms().getPointer(j).translation().get(0)*GLOBALSIZECHANGE);
             transform.getTranslation().setY(capturyPoseSerialized.transforms().getPointer(j).translation().get(1)*GLOBALSIZECHANGE);
-            transform.getTranslation().setZ(capturyPoseSerialized.transforms().getPointer(j).translation().get(0)*GLOBALSIZECHANGE);
+            transform.getTranslation().setZ(capturyPoseSerialized.transforms().getPointer(j).translation().get(2)*GLOBALSIZECHANGE);
             if(j == STARTINGTRANSFORMNUM)
             {
                ReferenceFrame firstFrame = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[j-STARTINGTRANSFORMNUM], ReferenceFrame.getWorldFrame(), transform);
                referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], firstFrame);
+            }
+            else if (j == 7 || j == 10 || j == 33 || j == 48)
+            {
+               ReferenceFrame frameToGlobal = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[6], ReferenceFrame.getWorldFrame(), transform);
+               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], frameToGlobal);
+            }
+            else if(j == 61 || j == 77)
+            {
+               ReferenceFrame frameToSpine = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[25], ReferenceFrame.getWorldFrame(), transform);
+               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], frameToSpine);
             }
             else{
                ReferenceFrame frame = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j-STARTINGTRANSFORMNUM], referenceFrameObjectMap.get(jointNames[j-1-STARTINGTRANSFORMNUM]), transform);
