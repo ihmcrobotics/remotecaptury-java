@@ -21,12 +21,12 @@ public class TCPSocketClient {
    private Socket clientSocket;
    private ObjectInputStream objectInputStream;
    private CapturyPoseSerialized capturyPoseSerialized;
-   private final ObjectMap<String, RDXReferenceFrameGraphic> renderableMap = new ObjectMap<>(69);
-   private final ObjectMap<String, ReferenceFrame> referenceFrameObjectMap = new ObjectMap<>(69);
    private final float[] startingTranslation = {0, 0, 0};
-   private final float GLOBALSIZECHANGE = 0.0025F;
-   private final int STARTINGTRANSFORMNUM = 0;
-   private final String[] jointNames = {"Root_tx","Root_ty","Root_tz","Root_ry","Root_rz","Root_rx","GlobalScale","Spine4_ry","Spine4_rz","Spine4_rx","Spine3_ty","Spine3_ry","Spine3_rz","Spine3_rx","Spine2_ty","Spine2_ry","Spine2_rz","Spine2_rx","Spine1_ty","Spine1_ry","Spine1_rz","Spine1_rx","Spine_ty","Spine_ry","Spine_rz","Spine_rx","Neck_ry","Neck_rz","Neck_rx","Head_ry","Head_rz","Head_rx","HeadEE","LeftShoulder_ry","LeftShoulder_rz","LeftArm_tx","LeftArm_rx","LeftArm_rz","LeftArm_ry","LeftArmScale","LeftForeArm_rx","LeftForeArm_rz","LeftForeArmScale","LeftForeArmRoll","LeftHand_rx","LeftHand_ry","LeftHandEE","RightShoulder_ry","RightShoulder_rz","RightArm_tx","RightArm_rx","RightArm_rz","RightArm_ry","RightArmScale","RightForeArm_rx","RightForeArm_rz","RightForeArmScale","RightForeArmRoll","RightHand_rx","RightHand_ry","RightHandEE","LeftUpLeg_tx","LeftUpLeg_ty","LeftUpLeg_rx","LeftUpLeg_rz","LeftUpLeg_ry","LeftLegScale","LeftLeg_rx","LeftLeg_ry","LeftLeg_rz","LeftLowLegScale","LeftFoot_rx","LeftFoot_ry","LeftFoot_rz","LeftFootScale","LeftToeBase_rx","LeftFootEE","RightUpLeg_tx","RightUpLeg_ty","RightUpLeg_rx","RightUpLeg_rz","RightUpLeg_ry","RightLegScale","RightLeg_rx","RightLeg_ry","RightLeg_rz","RightLowLegScale","RightFoot_rx","RightFoot_ry","RightFoot_rz","RightFootScale","RightToeBase_rx","RightFootEE"};
+   private final float GLOBALSIZECHANGE = 0.00125F;
+   private final String[] jointNames = {"Hips","Spine","Spine1","Spine2","Spine3","Spine4","Neck","Head","HeadEE","LeftShoulder","LeftArm","LeftForeArm","LeftHand","LeftHandThumb1","LeftHandThumb2","LeftHandThumb3","LeftHandThumbEE","LeftHandIndex1","LeftHandIndex2","LeftHandIndex3","LeftHandIndexEE","LeftHandMiddle1","LeftHandMiddle2","LeftHandMiddle3","LeftHandMiddleEE","LeftHandRing1","LeftHandRing2","LeftHandRing3","LeftHandRingEE","LeftHandPinky1","LeftHandPinky2","LeftHandPinky3","LeftHandPinkyEE","LeftHandEE","RightShoulder","RightArm","RightForeArm","RightHand","RightHandThumb1","RightHandThumb2","RightHandThumb3","RightHandThumbEE","RightHandIndex1","RightHandIndex2","RightHandIndex3","RightHandIndexEE","RightHandMiddle1","RightHandMiddle2","RightHandMiddle3","RightHandMiddleEE","RightHandRing1","RightHandRing2","RightHandRing3","RightHandRingEE","RightHandPinky1","RightHandPinky2","RightHandPinky3","RightHandPinkyEE","RightHandEE","LeftUpLeg","LeftLeg","LeftFoot","LeftToeBase","LeftFootEE","RightUpLeg","RightLeg","RightFoot","RightToeBase","RightFootEE"};
+   private final ObjectMap<String, RDXReferenceFrameGraphic> renderableMap = new ObjectMap<>(jointNames.length);
+   private final ObjectMap<String, ReferenceFrame> referenceFrameObjectMap = new ObjectMap<>(jointNames.length);
+   private final ObjectMap<String, RigidBodyTransform> transformObjectMap = new ObjectMap<>(jointNames.length);
    public void startConnection(int port) {
       try
       {
@@ -80,7 +80,7 @@ public class TCPSocketClient {
       }
    }
 
-   public void updatePose(TCPSocketClient client) {
+   public void setUpPose(TCPSocketClient client) {
       RemoteCapturyNativeLibrary.load();
       capturyPoseSerialized = null;
       try {
@@ -92,43 +92,8 @@ public class TCPSocketClient {
                System.out.println(startingTranslation[i]);
             }
          }
-         for(int j = STARTINGTRANSFORMNUM; j < jointNames.length+STARTINGTRANSFORMNUM; j++)
-         {
-            RigidBodyTransform transform = new RigidBodyTransform();
-            transform.getRotation().setYawPitchRoll(Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(0)),
-                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(1)),
-                                                    Math.toRadians(capturyPoseSerialized.transforms().getPointer(j).rotation().get(2)));
-            transform.getTranslation().setX(capturyPoseSerialized.transforms().getPointer(j).translation().get(0)*GLOBALSIZECHANGE);
-            transform.getTranslation().setY(capturyPoseSerialized.transforms().getPointer(j).translation().get(1)*GLOBALSIZECHANGE);
-            transform.getTranslation().setZ(capturyPoseSerialized.transforms().getPointer(j).translation().get(2)*GLOBALSIZECHANGE);
-            if(j == STARTINGTRANSFORMNUM)
-            {
-               ReferenceFrame firstFrame = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[j-STARTINGTRANSFORMNUM], ReferenceFrame.getWorldFrame(), transform);
-               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], firstFrame);
-            }
-            else if (j == 7 || j == 10 || j == 33 || j == 48)
-            {
-               ReferenceFrame frameToGlobal = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[6], ReferenceFrame.getWorldFrame(), transform);
-               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], frameToGlobal);
-            }
-            else if(j == 61 || j == 77)
-            {
-               ReferenceFrame frameToSpine = ReferenceFrameTools.constructFrameWithUnchangingTransformToParent(jointNames[25], ReferenceFrame.getWorldFrame(), transform);
-               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], frameToSpine);
-            }
-            else{
-               ReferenceFrame frame = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j-STARTINGTRANSFORMNUM], referenceFrameObjectMap.get(jointNames[j-1-STARTINGTRANSFORMNUM]), transform);
-
-               referenceFrameObjectMap.put(jointNames[j-STARTINGTRANSFORMNUM], frame);
-
-            }
-            System.out.println(transform.getTranslationX());
-            FramePose3D framePose = new FramePose3D();
-            framePose.setToZero(referenceFrameObjectMap.get(jointNames[j]));
-            framePose.changeFrame(ReferenceFrame.getWorldFrame());
-
-            updateRenderableObject(jointNames[j-STARTINGTRANSFORMNUM], framePose);
-         }
+         updateTransforms(client);
+         updateFrames();
 
       } catch (IOException e) {
          throw new RuntimeException(e);
@@ -136,6 +101,84 @@ public class TCPSocketClient {
          throw new RuntimeException(e);
       }
 
+   }
+   private void updateTransforms(TCPSocketClient client)
+   {
+      transformObjectMap.clear();
+      try
+      {
+         capturyPoseSerialized = client.receiveCapturyPoseSerialized();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      } catch (ClassNotFoundException e) {
+         throw new RuntimeException(e);
+      }
+      for(int j = 0; j < jointNames.length; j++)
+      {
+         RigidBodyTransform transform = new RigidBodyTransform();
+         if (capturyPoseSerialized.transforms().getPointer(j).rotation() == null)
+         {
+            transform.getRotation().setYawPitchRoll(0, 0, 0);
+         }
+         else
+         {
+            transform.getRotation()
+                     .setYawPitchRoll(capturyPoseSerialized.transforms().getPointer(j).rotation(0),
+                                      capturyPoseSerialized.transforms().getPointer(j).rotation(1),
+                                      capturyPoseSerialized.transforms().getPointer(j).rotation(2));
+         }
+         transform.getTranslation()
+                  .setX(capturyPoseSerialized.transforms().getPointer(j).translation(0) * GLOBALSIZECHANGE);
+         transform.getTranslation()
+                  .setY(capturyPoseSerialized.transforms().getPointer(j).translation(1) * GLOBALSIZECHANGE);
+         transform.getTranslation()
+                  .setZ(capturyPoseSerialized.transforms().getPointer(j).translation(2) * GLOBALSIZECHANGE);
+         transformObjectMap.put(jointNames[j], transform);
+      }
+   }
+   private void updateFrames(){
+      referenceFrameObjectMap.clear();
+      for(int j = 0; j < jointNames.length; j++)
+      {
+         if(j == 0)
+         {
+            ReferenceFrame firstFrame = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j], ReferenceFrame.getWorldFrame(), transformObjectMap.get(jointNames[j]));
+            referenceFrameObjectMap.put(jointNames[j], firstFrame);
+         }
+         else if (j == 4 || j == 3)
+         {
+            ReferenceFrame frameToHip = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j], referenceFrameObjectMap.get(jointNames[0]), transformObjectMap.get(jointNames[j]));
+            referenceFrameObjectMap.put(jointNames[j], frameToHip);
+         }
+         else if(j == 9 || j == 36)
+         {
+            ReferenceFrame frameToSpine = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j], referenceFrameObjectMap.get(jointNames[5]), transformObjectMap.get(jointNames[j]));
+            referenceFrameObjectMap.put(jointNames[j], frameToSpine);
+         }
+         else if(j == 59 || j == 63)
+         {
+            ReferenceFrame frameToSpine = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j], referenceFrameObjectMap.get(jointNames[1]), transformObjectMap.get(jointNames[j]));
+            referenceFrameObjectMap.put(jointNames[j], frameToSpine);
+         }
+         else{
+            ReferenceFrame frame = ReferenceFrameTools.constructFrameWithChangingTransformToParent(jointNames[j], referenceFrameObjectMap.get(jointNames[j-1]), transformObjectMap.get(jointNames[j]));
+            referenceFrameObjectMap.put(jointNames[j], frame);
+
+         }
+      }
+   }
+   public void updatePose(TCPSocketClient client){
+      updateTransforms(client);
+      renderableMap.clear();
+      updateFrames();
+      for(int i = 0; i < jointNames.length; i++)
+      {
+         FramePose3D framePose = new FramePose3D();
+         framePose.setToZero(referenceFrameObjectMap.get(jointNames[i]));
+         framePose.changeFrame(ReferenceFrame.getWorldFrame());
+
+         updateRenderableObject(jointNames[i], framePose);
+      }
    }
    private void updateRenderableObject(String key, FramePose3D framePose) {
       RDXReferenceFrameGraphic object = new RDXReferenceFrameGraphic(0.2);
