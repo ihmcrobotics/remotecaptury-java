@@ -28,11 +28,6 @@ public class CapturyActorSerialized implements java.io.Serializable {
       for (int i = 0; i < numJoints; i++) {
          this.joints.getPointer(i).put(actor.joints().getPointer(i));
       }
-      this.numBlobs = actor.numBlobs();
-      this.blobs = new CapturyBlob(numBlobs);
-      for (int i = 0; i < numBlobs; i++) {
-         this.blobs.getPointer(i).put(actor.blobs().getPointer(i));
-      }
       this.numBlendShapes = actor.numBlendShapes();
       this.blendShapes = new CapturyBlendShape(numBlendShapes);
       for (int i = 0; i < numBlendShapes; i++) {
@@ -90,14 +85,6 @@ public class CapturyActorSerialized implements java.io.Serializable {
          out.writeFloat(joint.scale(1));
          out.writeFloat(joint.scale(2));
       }
-      out.writeInt(numBlobs);
-      for (int i = 0; i < numBlobs; i++) {
-         CapturyBlob blob = blobs().getPointer(i);
-         out.writeFloat(blob.position(0).position());
-         out.writeFloat(blob.position(1).position());
-         out.writeFloat(blob.position(2).position());
-         out.writeFloat(blob.size());
-      }
       out.writeInt(numBlendShapes);
       for (int i = 0; i < numBlendShapes; i++) {
          CapturyBlendShape blendShape = blendShapes().getPointer(i);
@@ -129,16 +116,6 @@ public class CapturyActorSerialized implements java.io.Serializable {
             scale[j] = in.readFloat();
          }
          joint.scale().put(scale);
-      }
-      numBlobs = in.readInt();
-      blobs = new CapturyBlob(numBlobs);
-      for (int i = 0; i < numBlobs; i++) {
-         CapturyBlob blob = blobs.getPointer(i);
-         float[] position = new float[3];
-         for (int j = 0; j < 3; j++) {
-            position[j] = in.readFloat();
-         }
-         blob.size(in.readFloat());
       }
       numBlendShapes = in.readInt();
       blendShapes = new CapturyBlendShape(numBlendShapes);
