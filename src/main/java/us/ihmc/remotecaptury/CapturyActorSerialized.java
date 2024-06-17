@@ -77,15 +77,31 @@ public class CapturyActorSerialized implements java.io.Serializable {
       out.writeInt(id);
       out.writeInt(numJoints);
       for (int i = 0; i < numJoints; i++) {
-         // implement writing joint data
+         CapturyJoint joint = joints().getPointer(i);
+         out.writeUTF(joint.name().getString());
+         out.writeInt(joint.parent());
+         out.writeFloat(joint.offset(0));
+         out.writeFloat(joint.offset(1));
+         out.writeFloat(joint.offset(2));
+         out.writeFloat(joint.orientation(0));
+         out.writeFloat(joint.orientation(1));
+         out.writeFloat(joint.orientation(2));
+         out.writeFloat(joint.scale(0));
+         out.writeFloat(joint.scale(1));
+         out.writeFloat(joint.scale(2));
       }
       out.writeInt(numBlobs);
       for (int i = 0; i < numBlobs; i++) {
-         // implement writing blob data
+         CapturyBlob blob = blobs().getPointer(i);
+         out.writeFloat(blob.position(0).position());
+         out.writeFloat(blob.position(1).position());
+         out.writeFloat(blob.position(2).position());
+         out.writeFloat(blob.size());
       }
       out.writeInt(numBlendShapes);
       for (int i = 0; i < numBlendShapes; i++) {
-         // implement writing blend shape data
+         CapturyBlendShape blendShape = blendShapes().getPointer(i);
+         out.writeUTF(blendShape.name().getString());
       }
    }
 
@@ -95,17 +111,40 @@ public class CapturyActorSerialized implements java.io.Serializable {
       numJoints = in.readInt();
       joints = new CapturyJoint(numJoints);
       for (int i = 0; i < numJoints; i++) {
-         // implement reading joint data
+         CapturyJoint joint = joints.getPointer(i);
+         joint.name().put(in.readUTF().getBytes());
+         joint.parent(in.readInt());
+         float[] offset = new float[3];
+         for (int j = 0; j < 3; j++) {
+            offset[j] = in.readFloat();
+         }
+         joint.offset().put(offset);
+         float[] orientation = new float[3];
+         for (int j = 0; j < 3; j++) {
+            orientation[j] = in.readFloat();
+         }
+         joint.orientation().put(orientation);
+         float[] scale = new float[3];
+         for (int j = 0; j < 3; j++) {
+            scale[j] = in.readFloat();
+         }
+         joint.scale().put(scale);
       }
       numBlobs = in.readInt();
       blobs = new CapturyBlob(numBlobs);
       for (int i = 0; i < numBlobs; i++) {
-         // implement reading blob data
+         CapturyBlob blob = blobs.getPointer(i);
+         float[] position = new float[3];
+         for (int j = 0; j < 3; j++) {
+            position[j] = in.readFloat();
+         }
+         blob.size(in.readFloat());
       }
       numBlendShapes = in.readInt();
       blendShapes = new CapturyBlendShape(numBlendShapes);
       for (int i = 0; i < numBlendShapes; i++) {
-         // implement reading blend shape data
+         CapturyBlendShape blendShape = blendShapes.getPointer(i);
+         blendShape.name().put(in.readUTF().getBytes());
       }
    }
 }
