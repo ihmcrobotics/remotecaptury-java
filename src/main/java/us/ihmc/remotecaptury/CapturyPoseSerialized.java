@@ -71,12 +71,12 @@ public class CapturyPoseSerialized implements java.io.Serializable {
       out.writeInt(numTransforms);
       for (int i = 0; i < numTransforms; i++) {
          CapturyTransform transform = transforms().getPointer(i);
-         out.writeFloat(transform.translation(0));
-         out.writeFloat(transform.translation(1));
-         out.writeFloat(transform.translation(2));
-         out.writeFloat(transform.rotation(0));
-         out.writeFloat(transform.rotation(1));
-         out.writeFloat(transform.rotation(2));
+         out.writeFloat(transform.translation().get(0));
+         out.writeFloat(transform.translation().get(1));
+         out.writeFloat(transform.translation().get(2));
+         out.writeFloat(transform.rotation().get(0));
+         out.writeFloat(transform.rotation().get(1));
+         out.writeFloat(transform.rotation().get(2));
       }
       out.writeInt(flags);
       out.writeInt(numBlendShapes);
@@ -96,11 +96,12 @@ public class CapturyPoseSerialized implements java.io.Serializable {
          for (int j = 0; j < 3; j++) {
             translation[j] = in.readFloat();
          }
-         transforms.translation().put(translation);
-         for (int j = 0; j < 3; j++) {
-            rotation[j] = in.readFloat();
+         for(int k = 0; k < 3; k++)
+         {
+            rotation[k] = in.readFloat();
          }
-         transforms.rotation().put(rotation);
+         transforms.getPointer(i).translation().put(translation);
+         transforms.getPointer(i).rotation().put(rotation);
       }
       flags = in.readInt();
       numBlendShapes = in.readInt();
