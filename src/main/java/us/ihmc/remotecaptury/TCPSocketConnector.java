@@ -17,7 +17,18 @@ public class TCPSocketConnector {
          throw e;
       }
    }
-
+   public void sendCapturyActorSerialized(CapturyActorSerialized capturyActorSerialized) throws IOException
+   {
+      try{
+         objectOutputStream.writeObject(capturyActorSerialized);
+         objectOutputStream.flush();
+      }
+      catch(IOException e)
+      {
+         closeConnection();
+         throw e;
+      }
+   }
    public void sendCapturyPoseSerialized(CapturyPoseSerialized capturyPoseSerialized) throws IOException {
       try {
          objectOutputStream.writeObject(capturyPoseSerialized);

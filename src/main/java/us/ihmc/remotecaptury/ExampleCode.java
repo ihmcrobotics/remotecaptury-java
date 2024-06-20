@@ -10,6 +10,7 @@ import static us.ihmc.remotecaptury.global.remotecaptury.*;
 public class ExampleCode
 {
    private static volatile boolean running = true;
+   private static CapturyPose pose;
 
    static
    {
@@ -28,17 +29,16 @@ public class ExampleCode
       Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429be);
       Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c0);
       Captury_startStreamingImages(CAPTURY_STREAM_IMAGES, 0xa36429c2);
-      Captury_startStreaming(CAPTURY_STREAM_POSES);
-//      Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
-   }
+      Captury_startStreaming(CAPTURY_STREAM_SCALES);
+      Captury_startStreaming(CAPTURY_STREAM_LOCAL_POSES);
 
+   }
    private static final int ACTOR_ID = 30000; // TODO: figure out where this comes from
 
    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException
    {
       // Load native library
       RemoteCapturyNativeLibrary.load();
-
       // Captury SDK logging thread
       new Thread(() ->
                  {
@@ -64,10 +64,6 @@ public class ExampleCode
                     }
                  }, "CapturyLogPrinter").start();
       //Connects to CapturyLive and the TCPSocket
-      connect();
-      while(Captury_getConnectionStatus() != CAPTURY_CONNECTED){
-         connect();
-      }
       TCPSocketConnector connector = new TCPSocketConnector();
       connector.startConnection("172.16.66.240" , 6666);
       //Turns off printing all log at end as well
@@ -107,15 +103,17 @@ public class ExampleCode
 
       Thread.sleep(5000);
       System.out.println(actors.id());
+      boolean firstRun = true;
       while (Captury_getConnectionStatus() == CAPTURY_CONNECTED)
       {
-
-         CapturyPose pose = Captury_getCurrentPose(ACTOR_ID);
+         pose = Captury_getCurrentPose(ACTOR_ID);
+         CapturyActor actor = Captury_getActor(ACTOR_ID);
+//         Captury_convertPoseToLocal(pose, ACTOR_ID);
+         CapturyActorSerialized serializedActor = new CapturyActorSerialized(actor);
          CapturyPoseSerialized serializedPose = new CapturyPoseSerialized(pose);
-         System.out.println(serializedPose.numTransforms());
+         connector.sendCapturyActorSerialized(serializedActor);
          connector.sendCapturyPoseSerialized(serializedPose);
          Captury_freePose(pose);
-         Thread.sleep(10);
       }
 
       Thread.sleep(3000);
