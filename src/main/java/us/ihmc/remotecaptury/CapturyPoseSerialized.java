@@ -70,12 +70,13 @@ public class CapturyPoseSerialized implements java.io.Serializable {
       out.writeLong(timestamp);
       out.writeInt(numTransforms);
       for (int i = 0; i < numTransforms; i++) {
-         out.writeFloat(transforms.translation(i));
-         out.writeFloat(transforms.translation(i + 1));
-         out.writeFloat(transforms.translation(i + 2));
-         out.writeFloat(transforms.rotation(i));
-         out.writeFloat(transforms.rotation(i + 1));
-         out.writeFloat(transforms.rotation(i + 2));
+         CapturyTransform transform = transforms().getPointer(i);
+         out.writeFloat(transform.translation(0));
+         out.writeFloat(transform.translation(1));
+         out.writeFloat(transform.translation(2));
+         out.writeFloat(transform.rotation(0));
+         out.writeFloat(transform.rotation(1));
+         out.writeFloat(transform.rotation(2));
       }
       out.writeInt(flags);
       out.writeInt(numBlendShapes);
@@ -95,15 +96,11 @@ public class CapturyPoseSerialized implements java.io.Serializable {
          for (int j = 0; j < 3; j++) {
             translation[j] = in.readFloat();
          }
-         transforms.translation(i, translation[0]);
-         transforms.translation(i + 1, translation[1]);
-         transforms.translation(i + 2, translation[2]);
+         transforms.translation().put(translation);
          for (int j = 0; j < 3; j++) {
             rotation[j] = in.readFloat();
          }
-         transforms.rotation(i, rotation[0]);
-         transforms.rotation(i + 1, rotation[1]);
-         transforms.rotation(i + 2, rotation[2]);
+         transforms.rotation().put(rotation);
       }
       flags = in.readInt();
       numBlendShapes = in.readInt();
