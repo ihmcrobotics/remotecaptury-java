@@ -114,6 +114,7 @@ public class ExampleCode
          connector.sendCapturyActorSerialized(serializedActor);
          connector.sendCapturyPoseSerialized(serializedPose);
          Captury_freePose(pose);
+         Thread.sleep(50);
       }
 
       Thread.sleep(3000);
