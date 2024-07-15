@@ -20,14 +20,14 @@ repositories {
 
 dependencies {
     [...]
-    implementation("us.ihmc:remotecaptury-java:1.0.3")
+    implementation("us.ihmc:remotecaptury-java:1.0.4")
 }
 ```
 #### Gradle with ihmc-build
 ```
 mainDependencies {
    [...]   
-   api("us.ihmc:remotecaptury-java:1.0.3") {
+   api("us.ihmc:remotecaptury-java:1.0.4") {
       // You may need to exclude javacpp from being transitively included
       exclude(group = "org.bytedeco", module = "javacpp")
    }
